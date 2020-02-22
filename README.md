@@ -19,14 +19,14 @@ Before running, change the web application parameters in the file `config.py` or
 
 Use command `python manage.py --help` for help
 
-By default manage.py use `config.py`. For set another config use `--config` flag
+By default `manage.py` use `config.py`. To set another config use `--config` flag
 
-Put your common management tasks inside this file.
-Migration commands already available with db prefix.
+Put your common management tasks in this file.
+Migration commands already available with `db` prefix.
 
-By default manage.py already have these commands:
+By default `manage.py` has these commands:
 * `reset_db` — recreate all tables in the database. Usually, you don't need to use this command since it will erase all your data, but on the empty environment can be useful in the local environment
-* `add_root_user` — create root user with role SUPER_ADMIN
+* `add_root_user` — create root user with role `SUPER_ADMIN`
 * `print_table` — display all table rows
 
 Run the following commands to create application database tables and perform the initial migration
@@ -46,7 +46,7 @@ To run the web application use
 ```
 nohup gunicorn -b 0.0.0.0:8085 run:app --pid --threads 2 gunicorn.pid &
 ```
-Open http://127.0.0.1:8085/ and login as root user
+Open http://127.0.0.1:8085/ and login as a root user
 
 To kill the web application use
 ```
@@ -55,7 +55,7 @@ kill `cat gunicorn.pid`
 
 ## Migrations
 
-Whenever a database migration needs to be made. Run the following commands
+Whenever a database migration needs to be made – run the following commands
 ```
 python manage.py db migrate
 ```
