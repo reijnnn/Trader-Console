@@ -29,8 +29,7 @@ By default manage.py already have these commands:
 * `add_root_user` — create root user with role SUPER_ADMIN
 * `print_table` — display all table rows
 
-Run the following commands to create your app's
-database tables and perform the initial migration
+Run the following commands to create application database tables and perform the initial migration
 ```
 python manage.py db init
 python manage.py db migrate -m "Init migration"
