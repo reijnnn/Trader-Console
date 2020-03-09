@@ -28,6 +28,7 @@ By default `manage.py` has these commands:
 * `reset_db` — recreate all tables in the database. Usually, you don't need to use this command since it will erase all your data, but on the empty environment can be useful in the local environment
 * `add_root_user` — create root user with role `SUPER_ADMIN`
 * `print_table` — display all table rows
+* `run_unittests` — run all unittests
 
 Run the following commands to create application database tables and perform the initial migration
 ```
@@ -66,3 +67,9 @@ python manage.py db upgrade
 To apply the migration.
 
 For a full migration command reference, run `python manage.py db --help`.
+
+## Running the tests
+
+To run all unittests use
+
+`python manage.py --config config_tst.py run_unittests`
