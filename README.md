@@ -66,7 +66,7 @@ python manage.py db upgrade
 ```
 To apply the migration.
 
-For a full migration command reference, run `python manage.py db --help`.
+For a full migration command reference, run `python manage.py db --help`
 
 ## Running the tests
 
