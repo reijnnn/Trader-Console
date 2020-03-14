@@ -1,0 +1,73 @@
+{% extends 'base_nav.html' %}
+
+{% block header %}
+	<title>Trader bot page</title>
+{% endblock %}
+
+{% block content %}
+
+	<div class="panel panel-default">
+		{% if current_user.is_super_admin %}
+		<div class="panel-heading">
+			Thread status is <code>{{ thread_status }}</code>
+		</div>
+		{% endif %}
+
+		<div class="panel-heading">
+			Trader bot status is <code>{{ status }}</code>
+		</div>
+
+		{% if current_user.is_super_admin %}
+		<div class="panel-body">
+			<div class="text-center">
+				<a href="{{ url_for('trader_bot.start_trader_bot') }}" class="btn btn-default {% if status == 'active' %} disabled {% endif %}" role="button">Start</a>
+				<a href="{{ url_for('trader_bot.stop_trader_bot') }}"  class="btn btn-default {% if status != 'active' %} disabled {% endif %}" role="button">Stop</a>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Klines
+		</div>
+		<div class="content-box-large">
+			<div class="panel-body">
+				<div class="horizontal-scroll-table">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Symbol</th>
+								<th>Interval</th>
+								<th>Open_time</th>
+								<th>Open</th>
+								<th>High</th>
+								<th>Low</th>
+								<th>Close</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for kline in klines %}
+							<tr>
+								<td>{{ kline['symbol'] }}</td>
+								<td>{{ kline['interval'] }}</td>
+								<td>{{ kline['open_time'] }}</td>
+								<td>{{ '%0.2f' % kline['open']  | float }}</td>
+								<td>{{ '%0.2f' % kline['high']  | float }}</td>
+								<td>{{ '%0.2f' % kline['low']   | float }}</td>
+								<td>{{ '%0.2f' % kline['close'] | float }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<hr />
+
+				{% import 'pagination.html' as paging %}
+				{{ paging.render_pagination(pagination) }}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+.env/
+gunicorn.pid
+nohup.out
+
+__pycache__/
+*.pyc
+
+config_dev.py
+config_my_tst.py
+
+trader/static/favicon_old.ico
+trader/static/js/npm.js
+
+*.zip
+
+instance_*
+migrations/

@@ -1,0 +1,48 @@
+		{% macro render_pagination(pagination) %}
+
+		<div class="text-center">
+			<div class="row">
+				<div class="col-md-12 text-left">
+					{% if pagination.filter %}
+					<p>Showing {{ pagination.num_first_el_on_page }} to {{ pagination.num_last_el_on_page }} of {{ pagination.amount_elements }} entries (filtred by '{{ pagination.filter }}')</p>
+					{% else %}
+					<p>Showing {{ pagination.num_first_el_on_page }} to {{ pagination.num_last_el_on_page }} of {{ pagination.amount_elements }} entries</p>
+					{% endif %}
+				</div>
+			</div>
+
+			<nav aria-label="Page navigation">
+				<ul class="pagination">
+
+					{% if pagination.has_prev %}
+					<li>
+						<a href="{{ url_for_other_page(pagination.page - 1) }}" aria-label="Previous">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					{% endif %}
+
+					{%- for page in pagination.iter_pages() %}
+						{% if page %}
+							{% if page != pagination.page %}
+								<li><a href="{{ url_for_other_page(page) }}">{{ page }}</a></li>
+							{% else %}
+								<li class="active"><a href="{{ url_for_other_page(page) }}">{{ page }}</a></li>
+							{% endif %}
+						{% else %}
+							<li class="disabled"><span class="ellipsis">…</span></li>
+						{% endif %}
+					{%- endfor %}
+
+					{% if pagination.has_next %}
+					<li>
+						<a href="{{ url_for_other_page(pagination.page + 1) }}" aria-label="Next">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+					{% endif %}
+				</ul>
+			</nav>
+		</div>
+
+		{% endmacro %}

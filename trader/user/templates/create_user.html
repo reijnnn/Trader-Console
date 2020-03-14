@@ -1,0 +1,59 @@
+{% extends 'base_nav.html' %}
+
+{% block header %}
+	<title>{% if form.user_id.data %} Edit {% else %}	Create {% endif %} user page</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if form.user_id.data %} Edit {% else %}	Create {% endif %} user
+	</div>
+	<div class="panel-body">
+		{% include 'flashes.html' %}
+		{% from "form_utils.html" import render_field %}
+
+		<form class="form-horizontal" role="form" name="create_user" method="post">
+			<div class="form-group">
+				<label for="inputLogin" class="col-sm-2 control-label">{{ form.login.label }}</label>
+				<div class="col-sm-10">
+					{{ render_field(form.login, class_="form-control", placeholder='Login', id='inputLogin') }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputPassword" class="col-sm-2 control-label">{{ form.password.label }}</label>
+				<div class="col-sm-10">
+					{{ render_field(form.password, class_="form-control", placeholder='Password', id='inputPassword') }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="userRole" class="col-sm-2 control-label">{{ form.role.label }}</label>
+				<div class="col-sm-10">
+					{{ render_field(form.role, class_="form-control", id='userRole') }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="chatId" class="col-sm-2 control-label">{{ form.chat_id.label }}</label>
+				<div class="col-sm-10">
+					{{ render_field(form.chat_id, class_="form-control", placeholder='Chat id', id='chatId') }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="userStatus" class="col-sm-2 control-label">{{ form.status.label }}</label>
+				<div class="col-sm-10">
+					{{ render_field(form.status, class_="form-control", id='userStatus') }}
+				</div>
+			</div>
+			{{ form.user_id(type='hidden') }}
+			{{ form.hidden_tag() }}
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					{{ form.submit(class_="btn btn-default") }}
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

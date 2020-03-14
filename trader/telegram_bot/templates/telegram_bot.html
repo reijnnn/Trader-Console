@@ -1,0 +1,80 @@
+{% extends 'base_nav.html' %}
+
+{% block header %}
+	<title>Telegram bot page</title>
+{% endblock %}
+
+{% block content %}
+
+	<div class="panel panel-default">
+		{% if current_user.is_super_admin %}
+		<div class="panel-heading">
+			Thread status is <code>{{ thread_status }}</code>
+		</div>
+		{% endif %}
+
+		{% if current_user.is_admin %}
+		<div class="panel-heading">
+			Telegram bot status is <code>{{ status }}</code>
+		</div>
+		{% endif %}
+
+		<div class="panel-heading">
+			Web app: <a href="https://t.me/{{ bot_name }}" target="_blank">https://t.me/{{ bot_name }}</a>
+		</div>
+		<div class="panel-heading">
+			Desktop app: <a href="tg://resolve?domain={{ bot_name }}">{{ bot_name }}</a>
+		</div>
+
+		{% if current_user.is_super_admin %}
+		<div class="panel-body">
+			<div class="text-center">
+				<a href="{{ url_for('telegram_bot.start_telegram_bot') }}" class="btn btn-default {% if status == 'active' %} disabled {% endif %}" role="button">Start</a>
+				<a href="{{ url_for('telegram_bot.stop_telegram_bot') }}"  class="btn btn-default {% if status != 'active' %} disabled {% endif %}" role="button">Stop</a>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Notifications
+		</div>
+		<div class="content-box-large">
+			<div class="panel-body">
+				<div class="horizontal-scroll-table">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Status</th>
+								<th>Date</th>
+								<th>Text</th>
+								<th>Chat_id</th>
+								<th>Task_id</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for notification in notifications %}
+							<tr>
+								<td>{{ notification['notif_id'] }}</td>
+								<td>{{ notification['notif_status'] }}</td>
+								<td>{{ notification['notif_date'] }}</td>
+								<td>{{ notification['notif_text'] }}</td>
+								<td>{{ notification['chat_id'] }}</td>
+								<td>{{ notification['task_id'] }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<hr />
+
+				{% import 'pagination.html' as paging %}
+				{{ paging.render_pagination(pagination) }}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

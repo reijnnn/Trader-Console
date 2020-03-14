@@ -1,0 +1,202 @@
+{% extends 'base_nav.html' %}
+
+{% block header %}
+	<title>Proxies page</title>
+{% endblock %}
+
+{% block content %}
+
+	<div class="panel panel-default">
+
+		<div class="panel-heading">
+			Thread status is <code>{{ thread_status }}</code>
+		</div>
+
+		<div class="panel-heading">
+			Proxy bot status is <code>{{ status }}</code>
+		</div>
+
+		{% include 'flashes.html' %}
+
+		<div class="panel-body">
+			<div class="text-center">
+
+			<form action="{{ url_for('proxy_bot.add_proxy') }}" role="form" name="add-proxies" method="post">
+				<div class="input-group">
+					<input type="text" name="proxy_list" class="form-control" aria-describedby="proxy_list" placeholder="https:127.0.0.1:8181; http:127.0.0.1:8182; ..." autocomplete="off">
+					<span class="input-group-btn">
+						 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+						 <button class="btn btn-default" type="submit">Add</button>
+		 		 	</span>
+				</div>
+			</form>
+
+			</div>
+		</div>
+
+		<div class="panel-body">
+			<div class="text-center">
+				<a href="{{ url_for('proxy_bot.start_proxy_bot') }}" class="btn btn-default {% if status == 'active' %} disabled {% endif %}" role="button">Start</a>
+				<a href="{{ url_for('proxy_bot.stop_proxy_bot') }}"  class="btn btn-default {% if status != 'active' %} disabled {% endif %}" role="button">Stop</a>
+			</div>
+		</div>
+
+	</div>
+
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Sites with proxy-list
+		</div>
+
+		<div class="panel-body">
+
+
+			<div class="list-group">
+
+				<a href="https://hidemy.name/ru/proxy-list/?country=IT&type=s#list" target="_blank" class="list-group-item">
+					<h5 class="list-group-item-heading"><ins>https://hidemy.name/ru/proxy-list</ins></h5>
+					<p class="list-group-item-text">
+						<br>
+						<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="collapse" href="#collapseHidemy" class="collapsed">
+							Help code
+							<span class="caret"></span>
+						</button>
+					</p>
+				</a>
+
+				<a href="http://spys.one/proxys/IT/" target="_blank" class="list-group-item">
+					<h5 class="list-group-item-heading"><ins>http://spys.one/proxys/IT/</ins></h5>
+					<p class="list-group-item-text">
+						<br>
+						<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="collapse" href="#collapseSpys" class="collapsed">
+							Help code
+							<span class="caret"></span>
+						</button>
+					</p>
+				</a>
+			</div>
+
+<div id="collapseHidemy" class="panel-collapse collapse">
+<pre>
+<code>var list = '';
+$('.table_block tbody tr').each(function(ind, el) {
+	var ip    = $('td', el).eq(0).html();
+	var port  = $('td', el).eq(1).html();
+	var type  = $('td', el).eq(4).html().split(', ');
+
+	if (type.length > 1) {
+		type = type[1];
+	} else {
+		type = type[0];
+	}
+
+	var delay = parseInt($('td p', el).html());
+
+	if (delay < 700) {
+		list += type + ":" + ip + ":" + port + ";"
+	}
+});
+console.log(list);</code>
+</pre>
+</div>
+
+
+<div id="collapseSpys" class="panel-collapse collapse">
+<pre>
+<code>var list  = '';
+var tab   = document.getElementsByTagName('table')[2];
+var tbody = tab.getElementsByTagName('tbody')[0];
+var trs   = tbody.getElementsByTagName('tr');
+
+for(var i = 0; i < trs.length; i++) {
+	if (trs[i].className.indexOf('spy1x') > -1) {
+		var tds = trs[i].getElementsByTagName('td');
+		if (tds.length == 10) {
+			// ip + port
+			td = tds[0].innerHTML;
+			td = td.replace(td.match('&lt;script(.*?)&lt;/script&gt;')[0], '');
+
+			var ip = td.match('&lt;font class(.*?)&gt;(.*?)&lt;')[2];
+			var port = td.match('&lt;/font&gt;(.*?)&lt;')[1];
+			//console.log(ip + ":" + port);
+
+			// type
+			td = tds[1].innerHTML;
+			var type = 'other';
+			if (td.indexOf('&gt;S&lt;') > -1) {
+				type = "https";
+			}
+			if (td.indexOf('&gt;S&lt;') == -1 && td.indexOf('&gt;HTTP') > -1) {
+				type = "http";
+			}
+			//console.log(type);
+
+			// delay
+			td = tds[3].innerHTML;
+			var delay = td.match("&gt;(.*?)&lt;/font&gt;")[1];
+			//console.log(delay);
+
+			if (delay < 1 && type == "https") {
+				list += type + ":" + ip + ":" + port + ";";
+			}
+		}
+	}
+}
+console.log(list);</code>
+</pre>
+</div>
+
+		</div>
+	</div>
+
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Proxies
+		</div>
+		<div class="content-box-large">
+			<div class="panel-body">
+				<div class="horizontal-scroll-table">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Type</th>
+								<th>IP</th>
+								<th>Port</th>
+								<th>Weight</th>
+								<th>Good try</th>
+								<th>Bad try</th>
+								<th>Update time</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for proxy in proxies %}
+							<tr  {% if proxy['proxy_id'] == active_proxy_id %} class="success" {% endif %}>
+								<td>{{ proxy['proxy_type'] }}</td>
+								<td>{{ proxy['proxy_ip'] }}</td>
+								<td>{{ proxy['proxy_port'] }}</td>
+								<td>{{ proxy['proxy_weight'] }}</td>
+								<td>{{ proxy['proxy_good_try'] }}</td>
+								<td>{{ proxy['proxy_bad_try'] }}</td>
+								<td>{{ proxy['last_update_time'] }}</td>
+								<td>
+									<a title="Delete" href="{{ url_for('proxy_bot.delete_proxy', proxy_id=proxy['proxy_id']) }}"><i class="glyphicon glyphicon-remove"></i></a>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+
+				<hr />
+
+				{% import 'pagination.html' as paging %}
+				{{ paging.render_pagination(pagination) }}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

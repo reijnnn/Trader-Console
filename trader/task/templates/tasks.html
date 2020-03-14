@@ -1,0 +1,59 @@
+{% extends 'base_nav.html' %}
+
+{% block header %}
+	<title>Tasks page</title>
+{% endblock %}
+
+{% block content %}
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Tasks
+		</div>
+		<div class="content-box-large">
+			<div class="panel-body">
+				{% include 'flashes.html' %}
+				<div class="horizontal-scroll-table">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>Params</th>
+								<th>Status</th>
+								<th>Date</th>
+								<th>Exec date</th>
+								<th>Chat_id</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for task in tasks %}
+							<tr>
+								<td>{{ task['task_id'] }}</td>
+								<td>{{ task['task_name'] }}</td>
+								<td>{{ task['task_params'] }}</td>
+								<td>{{ task['task_status'] }}</td>
+								<td>{{ task['task_date'] }}</td>
+								<td>{{ task['last_exec_time'] if task['last_exec_time'] }}</td>
+								<td>{{ task['chat_id'] }}</td>
+								<td>
+									{% if task['task_status'] == 'ACTIVE' %}
+										<a title="Delete" class="confirm-delete" href="{{ url_for('task.cancel_active_task', task_id=task['task_id']) }}"><i class="glyphicon glyphicon-remove"></i></a>
+									{% endif %}
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<hr />
+
+				{% import 'pagination.html' as paging %}
+				{{ paging.render_pagination(pagination) }}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
