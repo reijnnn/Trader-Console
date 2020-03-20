@@ -7,7 +7,7 @@ Create your own strategies using [BINANCE API](https://binance-docs.github.io/ap
 Run the following commands to bootstrap your environment
 ```
 git clone https://github.com/reijnnn/Trader-Console.git
-cd trader-console
+cd Trader-Console
 virtualenv .env
 source .env/bin/activate
 pip install -r requirements.txt
@@ -19,7 +19,7 @@ Before running, change the web application parameters in the file `config.py` or
 
 Use command `python manage.py --help` for help
 
-By default `manage.py` use `config.py`. To set another config use `--config` flag
+By default `manage.py` use `config.py`. To set another config use `--config` or `-c` flag
 
 Put your common management tasks in this file.
 Migration commands already available with `db` prefix.
@@ -32,22 +32,22 @@ By default `manage.py` has these commands:
 
 Run the following commands to create application database tables and perform the initial migration
 ```
-python manage.py db init
-python manage.py db migrate -m "Init migration"
-python manage.py db upgrade
+python manage.py -c config_dev.py db init
+python manage.py -c config_dev.py db migrate -m "Init migration"
+python manage.py -c config_dev.py db upgrade
 ```
 Run the following command to create root user with role `SUPER_ADMIN`
 ```
-python manage.py add_root_user --login root --password r00tPWD#
+python manage.py -c config_dev.py add_root_user --login root --password r00tPWD#
 ```
 
 ## How to start
 
 To run the web application use
 ```
-nohup gunicorn -b 0.0.0.0:8085 run:app --pid --threads 2 gunicorn.pid &
+nohup gunicorn -b 0.0.0.0:8081 run:app --threads 2 --pid gunicorn.pid &
 ```
-Open http://127.0.0.1:8085/ and login as a root user
+Open http://127.0.0.1:8081/ and login as a root user
 
 To kill the web application use
 ```
@@ -58,11 +58,11 @@ kill `cat gunicorn.pid`
 
 Whenever a database migration needs to be made – run the following commands
 ```
-python manage.py db migrate
+python manage.py -c config_dev.py db migrate
 ```
 This will generate a new migration script. Then run
 ```
-python manage.py db upgrade
+python manage.py -c config_dev.py db upgrade
 ```
 To apply the migration.
 
@@ -72,4 +72,4 @@ For a full migration command reference, run `python manage.py db --help`
 
 To run all unittests use
 
-`python manage.py --config config_tst.py run_unittests`
+`python manage.py -c config_tst.py run_unittests`
