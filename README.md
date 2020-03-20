@@ -13,7 +13,7 @@ source .env/bin/activate
 pip install -r requirements.txt
 ```
 
-Before running, change the web application parameters in the file `config.py` or create your own config file with name like `config_dev.py` or `config_prd.py`. Change config file name in `run.app`
+Before running, change the web application parameters in the file `config.py` or create your own config file with name like `config_dev.py` or `config_prd.py`. Change config file name in `run.py`
 
 ## `manage.py` command overview
 
