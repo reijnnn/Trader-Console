@@ -1,176 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
 
-		{% block header %}
+      {% block header %}
 
-		{% endblock %}
+      {% endblock %}
 
-		<link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon" >
-		<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-		<link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static', filename='favicon.ico') }}" rel="shortcut icon" >
+      <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
 
-		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-	</head>
-	<body>
-		<nav class="navbar navbar-default navbar-static-top">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle navbar-toggle-sidebar collapsed">MENU</button>
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="{{ url_for('frontend.index') }}">{{ get_app_name() }}</a>
-				</div>
+      <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+   </head>
+   <body>
+      <nav class="navbar navbar-default navbar-static-top">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle navbar-toggle-sidebar collapsed">MENU</button>
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+               </button>
+               <a class="navbar-brand" href="{{ url_for('frontend.index') }}">{{ get_app_name() }}</a>
+            </div>
 
-				<div class="collapse navbar-collapse" id="bs-navbar-collapse">
-					<form action="{{ url_for_search() }}" class="navbar-form navbar-left" method="GET" role="search">
-						<div class="input-group">
-								<input type="text" name="search" class="form-control" placeholder="Search">
-								<span class="input-group-btn">
-									<button type="submit" class="btn btn-default">
-										<i class="glyphicon glyphicon-search"></i>
-									</button>
-								</span>
-						</div>
-					</form>
-					<ul class="nav navbar-nav navbar-right">
+            <div class="collapse navbar-collapse" id="bs-navbar-collapse">
+               <form action="{{ url_for_search() }}" class="navbar-form navbar-left" method="GET" role="search">
+                  <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+                           <button type="submit" class="btn btn-default">
+                              <i class="glyphicon glyphicon-search"></i>
+                           </button>
+                        </span>
+                  </div>
+               </form>
+               <ul class="nav navbar-nav navbar-right">
 
-					<!--
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								Notices
-								<span class="badge">1</span>
-							</a>
-							<ul class="dropdown-menu" role="notifications">
-								<li class="dropdown-header">NOTICES</li>
-								<li class="divider"></li>
-								<li><a>New message</a></li>
-							</ul>
-						</li>
-					-->
+               <!--
+                  <li class="dropdown">
+                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Notices
+                        <span class="badge">1</span>
+                     </a>
+                     <ul class="dropdown-menu" role="notifications">
+                        <li class="dropdown-header">NOTICES</li>
+                        <li class="divider"></li>
+                        <li><a>New message</a></li>
+                     </ul>
+                  </li>
+               -->
 
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-								{{ current_user.login }}
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li class="dropdown-header">SETTINGS</li>
-								<li class="divider"></li>
+                  <li class="dropdown">
+                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        {{ current_user.login }}
+                        <span class="caret"></span>
+                     </a>
+                     <ul class="dropdown-menu" role="menu">
+                        <li class="dropdown-header">SETTINGS</li>
+                        <li class="divider"></li>
 
-								{% if current_user.is_admin and not current_user.is_super_admin %}
-									<li><a href="{{ url_for('user.edit_user', user_id=current_user.id) }}">Profile</a></li>
-									<li class="divider"></li>
-								{% endif %}
+                        {% if current_user.is_admin and not current_user.is_super_admin %}
+                           <li><a href="{{ url_for('user.edit_user', user_id=current_user.id) }}">Profile</a></li>
+                           <li class="divider"></li>
+                        {% endif %}
 
-								<li><a href="{{ url_for('user.logout') }}">Logout</a></li>
-							</ul>
-						</li>
+                        <li><a href="{{ url_for('user.logout') }}">Logout</a></li>
+                     </ul>
+                  </li>
 
-					</ul>
-				</div>
-			</div>
-		</nav>
+               </ul>
+            </div>
+         </div>
+      </nav>
 
-		<div class="container-fluid main-container">
-			<div class="col-md-2 col-sm-2 sidebar">
-				<div class="row">
-					<div class="side-menu">
-						<nav class="navbar navbar-default" role="navigation">
-							<div class="side-menu-container">
-								<ul class="nav navbar-nav">
-									<li {% if 'frontend.index' == request.url_rule.endpoint %} class="active" {% endif %}>
-										<a href="{{ url_for('frontend.index') }}"><span class="glyphicon glyphicon-home"></span> Home</a>
-									</li>
+      <div class="container-fluid main-container">
+         <div class="col-md-2 col-sm-2 sidebar">
+            <div class="row">
+               <div class="side-menu">
+                  <nav class="navbar navbar-default" role="navigation">
+                     <div class="side-menu-container">
+                        <ul class="nav navbar-nav">
+                           <li {% if 'frontend.index' == request.url_rule.endpoint %} class="active" {% endif %}>
+                              <a href="{{ url_for('frontend.index') }}"><span class="glyphicon glyphicon-home"></span> Home</a>
+                           </li>
 
-									{% if current_user.is_admin %}
-									<li class="panel panel-default panel-dropdown">
-										<a data-toggle="collapse" href="#dropdown-users">
-											<span class="glyphicon glyphicon-user"></span> Users
-											<span class="caret"></span>
-										</a>
+                           {% if current_user.is_admin %}
+                           <li class="panel panel-default panel-dropdown">
+                              <a data-toggle="collapse" href="#dropdown-users">
+                                 <span class="glyphicon glyphicon-user"></span> Users
+                                 <span class="caret"></span>
+                              </a>
 
-										<div class="panel-collapse collapse" id="dropdown-users">
-											<div class="panel-body">
-												<ul class="nav navbar-nav">
-													<li {% if 'user.create_user' == request.url_rule.endpoint %} class="active" {% endif %}>
-														<a href="{{ url_for('user.create_user') }}"> Create user</a>
-													</li>
-													<li {% if 'user.users_list' == request.url_rule.endpoint %} class="active" {% endif %}>
-														<a href="{{ url_for('user.users_list') }}"> Users list</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</li>
-									{% endif %}
+                              <div class="panel-collapse collapse" id="dropdown-users">
+                                 <div class="panel-body">
+                                    <ul class="nav navbar-nav">
+                                       <li {% if 'user.create_user' == request.url_rule.endpoint %} class="active" {% endif %}>
+                                          <a href="{{ url_for('user.create_user') }}"> Create user</a>
+                                       </li>
+                                       <li {% if 'user.users_list' == request.url_rule.endpoint %} class="active" {% endif %}>
+                                          <a href="{{ url_for('user.users_list') }}"> Users list</a>
+                                       </li>
+                                    </ul>
+                                 </div>
+                              </div>
+                           </li>
+                           {% endif %}
 
-									{% if current_user.is_admin %}
-									<li {% if 'trader_bot.monitor_trader_bot' == request.url_rule.endpoint %} class="active" {% endif %}>
-										<a href="{{ url_for('trader_bot.monitor_trader_bot') }}"><span class="glyphicon glyphicon-hourglass"></span> Trader bot</a>
-									</li>
-									{% endif %}
+                           {% if current_user.is_admin %}
+                           <li {% if 'trader_bot.monitor_trader_bot' == request.url_rule.endpoint %} class="active" {% endif %}>
+                              <a href="{{ url_for('trader_bot.monitor_trader_bot') }}"><span class="glyphicon glyphicon-hourglass"></span> Trader bot</a>
+                           </li>
+                           {% endif %}
 
-									<li {% if 'telegram_bot.monitor_telegram_bot' == request.url_rule.endpoint %} class="active" {% endif %}>
-										<a href="{{ url_for('telegram_bot.monitor_telegram_bot') }}"><span class="glyphicon glyphicon-education"></span> Telegram bot</a>
-									</li>
+                           <li {% if 'telegram_bot.monitor_telegram_bot' == request.url_rule.endpoint %} class="active" {% endif %}>
+                              <a href="{{ url_for('telegram_bot.monitor_telegram_bot') }}"><span class="glyphicon glyphicon-education"></span> Telegram bot</a>
+                           </li>
 
-									{% if current_user.is_super_admin %}
-									<li {% if 'proxy_bot.monitor_proxy_bot' == request.url_rule.endpoint %} class="active" {% endif %}>
-										<a href="{{ url_for('proxy_bot.monitor_proxy_bot') }}"><span class="glyphicon glyphicon-cloud"></span> Proxy bot</a>
-									</li>
-									{% endif %}
+                           {% if current_user.is_super_admin %}
+                           <li {% if 'proxy_bot.monitor_proxy_bot' == request.url_rule.endpoint %} class="active" {% endif %}>
+                              <a href="{{ url_for('proxy_bot.monitor_proxy_bot') }}"><span class="glyphicon glyphicon-cloud"></span> Proxy bot</a>
+                           </li>
+                           {% endif %}
 
-									<li {% if 'task.monitor_tasks' == request.url_rule.endpoint %} class="active" {% endif %}>
-										<a href="{{ url_for('task.monitor_tasks') }}"><span class="glyphicon glyphicon-tasks"></span> Tasks</a>
-									</li>
+                           <li {% if 'task.monitor_tasks' == request.url_rule.endpoint %} class="active" {% endif %}>
+                              <a href="{{ url_for('task.monitor_tasks') }}"><span class="glyphicon glyphicon-tasks"></span> Tasks</a>
+                           </li>
 
-									{% if current_user.is_super_admin %}
-									<li {% if 'sql.execute_sql' == request.url_rule.endpoint %} class="active" {% endif %}>
-										<a href="{{ url_for('sql.execute_sql') }}"><span class="glyphicon glyphicon-stats"></span> Execute SQL</a>
-									</li>
-									{% endif %}
+                           {% if current_user.is_super_admin %}
+                           <li {% if 'sql.execute_sql' == request.url_rule.endpoint %} class="active" {% endif %}>
+                              <a href="{{ url_for('sql.execute_sql') }}"><span class="glyphicon glyphicon-stats"></span> Execute SQL</a>
+                           </li>
+                           {% endif %}
 
-									{% if current_user.is_super_admin %}
-									<li {% if 'frontend.logs' == request.url_rule.endpoint %} class="active" {% endif %}>
-										<a href="{{ url_for('frontend.logs') }}"><span class="glyphicon glyphicon-hdd"></span> Logs</a>
-									</li>
-									{% endif %}
+                           {% if current_user.is_super_admin %}
+                           <li {% if 'frontend.logs' == request.url_rule.endpoint %} class="active" {% endif %}>
+                              <a href="{{ url_for('frontend.logs') }}"><span class="glyphicon glyphicon-hdd"></span> Logs</a>
+                           </li>
+                           {% endif %}
 
-								</ul>
-							</div>
-						</nav>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-10 col-sm-10 content">
+                        </ul>
+                     </div>
+                  </nav>
+               </div>
+            </div>
+         </div>
+         <div class="col-md-10 col-sm-10 content">
 
-			{% block content %}
+         {% block content %}
 
-			{% endblock %}
+         {% endblock %}
 
-		</div>
-	</div>
+      </div>
+   </div>
 
-	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
 
-	{% block js %}
+   {% block js %}
 
-	{% endblock %}
+   {% endblock %}
 
-	</body>
+   </body>
 </html>

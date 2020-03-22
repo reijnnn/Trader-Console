@@ -1,35 +1,35 @@
 {% extends 'base_nav.html' %}
 
 {% block header %}
-	<title>Logs page</title>
+   <title>Logs page</title>
 {% endblock %}
 
 {% block content %}
 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			App logs
-		</div>
-		<div class="logs-navigation">
-			<ul class="nav nav-tabs">
-				<li {% if logs_type == 'debug' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='debug') }}">Debug</a></li>
-				<li {% if logs_type == 'info'  %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='info') }}">Info</a></li>
-				<li {% if logs_type == 'error' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='error') }}">Error</a></li>
-			</ul>
-		</div>
-		<div class="panel-body">
-			{% for log in logs %}
-				{% if log %}
-					{{ log }} <br>
-				{% endif %}
-			{% endfor %}
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         App logs
+      </div>
+      <div class="logs-navigation">
+         <ul class="nav nav-tabs">
+            <li {% if logs_type == 'debug' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='debug') }}">Debug</a></li>
+            <li {% if logs_type == 'info'  %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='info') }}">Info</a></li>
+            <li {% if logs_type == 'error' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='error') }}">Error</a></li>
+         </ul>
+      </div>
+      <div class="panel-body">
+         {% for log in logs %}
+            {% if log %}
+               {{ log }} <br>
+            {% endif %}
+         {% endfor %}
 
-			<hr />
+         <hr />
 
-			{% import 'pagination.html' as paging %}
-			{{ paging.render_pagination(pagination) }}
+         {% import 'pagination.html' as paging %}
+         {{ paging.render_pagination(pagination) }}
 
-		</div>
-	</div>
+      </div>
+   </div>
 
 {% endblock %}
