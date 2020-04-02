@@ -1,6 +1,7 @@
 from flask_login  import UserMixin
 from string       import ascii_letters, digits
 from random       import choice
+import uuid
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -37,15 +38,20 @@ class Users(db.Model, UserMixin):
    owner_id    = db.Column(db.Integer)
    status      = db.Column(db.String,  nullable=False)
    reset_code  = db.Column(db.String)
+   auth_id     = db.Column(db.String,  nullable=False)
 
    def set_password(self, password):
       self.password = generate_password_hash(password)
+      self.auth_id  = self.login + '_' + str(uuid.uuid4())
 
    def check_password(self, password):
       return check_password_hash(self.password, password)
 
    def set_reset_code(self):
       self.reset_code = ''.join([choice(ascii_letters + digits) for n in range(64)])
+
+   def get_id(self):
+      return self.auth_id
 
    @property
    def is_active(self):

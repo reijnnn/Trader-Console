@@ -37,8 +37,8 @@ def logout():
    return redirect(url_for('user.login'))
 
 @login_manager.user_loader
-def load_user(user_id):
-   return db.session.query(Users).filter_by(id=user_id).filter_by(status=User_status.ACTIVE).first()
+def load_user(auth_id):
+   return db.session.query(Users).filter_by(auth_id=auth_id).filter_by(status=User_status.ACTIVE).first()
 
 @user_bp.route('/create_user', methods=['GET', 'POST'])
 @login_required
