@@ -58,7 +58,7 @@ def configure_extensions(app):
    db.set_app_instance(app)
    login_manager.init_app(app)
    csrf.init_app(app)
-   migrate.init_app(app, db, app.config['MIGRATION_DIR'])
+   migrate.init_app(app, db, app.config['MIGRATIONS_DIR'])
 
 def configure_blueprints(app):
    from .frontend.views     import frontend_bp
