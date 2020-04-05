@@ -18,6 +18,8 @@ REMEMBER_COOKIE_DURATION  = 24 * 60 * 60
 
 INSTANCE_DIR              = path.join(path.dirname(path.dirname(__file__)), 'instance_tst')
 
+MIGRATION_DIR             = path.join(INSTANCE_DIR, 'migrations')
+
 APP_LOG_DEBUG_FILE        = path.join(INSTANCE_DIR, 'logs', 'debug.log')
 APP_LOG_INFO_FILE         = path.join(INSTANCE_DIR, 'logs', 'info.log')
 APP_LOG_ERROR_FILE        = path.join(INSTANCE_DIR, 'logs', 'error.log')

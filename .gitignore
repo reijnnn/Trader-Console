@@ -1,4 +1,8 @@
 .env/
+env/
+.venv/
+venv/
+
 gunicorn.pid
 nohup.out
 
@@ -14,4 +18,3 @@ trader/static/js/npm.js
 *.zip
 
 instance_*
-migrations/
