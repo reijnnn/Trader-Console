@@ -4,6 +4,7 @@ from flask                   import url_for, current_app
 from trader.user.models      import Users, User_role, User_status
 from trader.task.models      import Tasks, Task_status
 from trader.proxy_bot.models import Proxies
+from trader.extensions       import db
 
 from string import ascii_letters
 from random import choice
@@ -21,7 +22,6 @@ class BaseTestCase(unittest.TestCase):
       self.app.logger.info("\n\n\nStart " + test_name + "\n")
 
    def _init_db(self):
-      from trader.extensions import db
       self.db = db
 
       db.drop_all()

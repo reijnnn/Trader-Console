@@ -20,7 +20,7 @@
       {% if current_user.is_super_admin %}
       <div class="panel-body">
          <div class="text-center">
-            <a href="{{ url_for('trader_bot.start_trader_bot') }}" class="btn btn-default {% if status == 'active' %} disabled {% endif %}" role="button">Start</a>
+            <a href="{{ url_for('trader_bot.start_trader_bot') }}" class="btn btn-default {% if status == 'active' or thread_status == 'inactive' %} disabled {% endif %}" role="button">Start</a>
             <a href="{{ url_for('trader_bot.stop_trader_bot') }}"  class="btn btn-default {% if status != 'active' %} disabled {% endif %}" role="button">Stop</a>
          </div>
       </div>

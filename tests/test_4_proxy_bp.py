@@ -23,15 +23,19 @@ class TestProxyBP(BaseTestCase):
          page = self.client.get(url_for('proxy_bot.monitor_proxy_bot'), follow_redirects=False)
          self.assertEqual(page.status_code, 302)
 
-         self.assertEqual(proxy_bot.get_status(), 'active')
+         self.assertEqual(proxy_bot.get_status(), 'inactive')
+
+         # start_proxy_bot.GET
+         page = self.client.get(url_for('proxy_bot.start_proxy_bot'), follow_redirects=False)
+         self.assertNotEqual(proxy_bot.get_status(), 'active')
+
+         proxy_bot.restart()
 
          # stop_proxy_bot.GET
          page = self.client.get(url_for('proxy_bot.stop_proxy_bot'), follow_redirects=False)
          self.assertNotEqual(proxy_bot.get_status(), 'inactive')
 
-         # start_proxy_bot.GET
-         page = self.client.get(url_for('proxy_bot.start_proxy_bot'), follow_redirects=False)
-         self.assertEqual(proxy_bot.get_status(), 'active')
+         proxy_bot.cancel()
 
          cnt_proxy = self.db.session.query(Proxies).count()
 
@@ -64,15 +68,15 @@ class TestProxyBP(BaseTestCase):
          page = self.client.get(url_for('proxy_bot.monitor_proxy_bot'), follow_redirects=False)
          self.assertEqual(page.status_code, 200)
 
-         self.assertEqual(proxy_bot.get_status(), 'active')
-
-         # stop_proxy_bot.GET
-         page = self.client.get(url_for('proxy_bot.stop_proxy_bot'), follow_redirects=False)
          self.assertEqual(proxy_bot.get_status(), 'inactive')
 
          # start_proxy_bot.GET
          page = self.client.get(url_for('proxy_bot.start_proxy_bot'), follow_redirects=False)
          self.assertEqual(proxy_bot.get_status(), 'active')
+
+         # stop_proxy_bot.GET
+         page = self.client.get(url_for('proxy_bot.stop_proxy_bot'), follow_redirects=False)
+         self.assertEqual(proxy_bot.get_status(), 'inactive')
 
          cnt_proxy = self.db.session.query(Proxies).count()
 

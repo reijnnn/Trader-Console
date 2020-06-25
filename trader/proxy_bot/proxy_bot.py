@@ -13,7 +13,7 @@ class Proxy_bot(threading.Thread):
 
    def __init__(self, app=None):
       super(Proxy_bot, self).__init__()
-      self.is_active       = True
+      self.is_active       = False
       self.active_proxy_id = None
 
       if app is not None:
@@ -26,6 +26,7 @@ class Proxy_bot(threading.Thread):
 
       logger.info("Proxy bot started")
 
+      self.is_active = True
       while True:
          while self.is_active:
             self.update_active_proxy_id()

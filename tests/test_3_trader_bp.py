@@ -21,15 +21,19 @@ class TestTradermBP(BaseTestCase):
          page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
          self.assertEqual(page.status_code, 302)
 
-         self.assertEqual(trader_bot.get_status(), 'active')
+         self.assertEqual(trader_bot.get_status(), 'inactive')
+
+         # start_trader_bot.GET
+         page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
+         self.assertNotEqual(trader_bot.get_status(), 'active')
+
+         trader_bot.restart()
 
          # stop_trader_bot.GET
          page = self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
          self.assertNotEqual(trader_bot.get_status(), 'inactive')
 
-         # start_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
-         self.assertEqual(trader_bot.get_status(), 'active')
+         trader_bot.cancel()
 
    def test_access(self):
       self.common_error_access()
@@ -43,15 +47,15 @@ class TestTradermBP(BaseTestCase):
          page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
          self.assertEqual(page.status_code, 200)
 
-         self.assertEqual(trader_bot.get_status(), 'active')
-
-         # stop_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
          self.assertEqual(trader_bot.get_status(), 'inactive')
 
          # start_trader_bot.GET
          page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
          self.assertEqual(trader_bot.get_status(), 'active')
+
+         # stop_trader_bot.GET
+         page = self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
+         self.assertEqual(trader_bot.get_status(), 'inactive')
 
    def test_admin(self):
       self._create_admin()
@@ -62,15 +66,19 @@ class TestTradermBP(BaseTestCase):
          page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
          self.assertEqual(page.status_code, 200)
 
-         self.assertEqual(trader_bot.get_status(), 'active')
+         self.assertEqual(trader_bot.get_status(), 'inactive')
+
+         # start_trader_bot.GET
+         page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
+         self.assertNotEqual(trader_bot.get_status(), 'active')
+
+         trader_bot.restart()
 
          # stop_trader_bot.GET
          page = self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
          self.assertNotEqual(trader_bot.get_status(), 'inactive')
 
-         # start_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
-         self.assertEqual(trader_bot.get_status(), 'active')
+         trader_bot.cancel()
 
    def test_user(self):
       self._create_user()

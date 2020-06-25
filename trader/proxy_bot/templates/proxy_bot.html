@@ -36,7 +36,7 @@
 
       <div class="panel-body">
          <div class="text-center">
-            <a href="{{ url_for('proxy_bot.start_proxy_bot') }}" class="btn btn-default {% if status == 'active' %} disabled {% endif %}" role="button">Start</a>
+            <a href="{{ url_for('proxy_bot.start_proxy_bot') }}" class="btn btn-default {% if status == 'active' or thread_status == 'inactive' %} disabled {% endif %}" role="button">Start</a>
             <a href="{{ url_for('proxy_bot.stop_proxy_bot') }}"  class="btn btn-default {% if status != 'active' %} disabled {% endif %}" role="button">Stop</a>
          </div>
       </div>

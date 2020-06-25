@@ -15,7 +15,7 @@ class Telegram_bot(threading.Thread):
    def __init__(self, app=None):
       super(Telegram_bot, self).__init__()
       self.offset    = 0
-      self.is_active = True
+      self.is_active = False
 
       if app is not None:
          self.init_app(app)
@@ -39,6 +39,7 @@ class Telegram_bot(threading.Thread):
 
    def refresh_proxy(self):
       if proxy_bot.get_status() == 'inactive':
+         self.app.config['TELEGRAM_BOT_PROXY'] = {}
          return True
 
       active_proxy_id = proxy_bot.get_active_proxy_id()
@@ -72,6 +73,7 @@ class Telegram_bot(threading.Thread):
       else:
          logger.info("Telegram bot started")
 
+      self.is_active = True
       while True:
          while self.is_active:
 

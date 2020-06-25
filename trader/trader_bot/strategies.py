@@ -451,7 +451,7 @@ class Strategies():
       start_month = int(params['start_date'][4:6])
       start_day   = int(params['start_date'][6:8])
 
-      start_time  = datetime(start_year, start_month, start_day, 0, 0)
+      start_time  = datetime(start_year, start_month, start_day, 3, 0)
       end_time    = start_time + interval_time * (limit_loads - 1)
 
       while True:

@@ -23,7 +23,7 @@ class Trader_bot(threading.Thread):
 
    def __init__(self, app=None):
       super(Trader_bot, self).__init__()
-      self.is_active = True
+      self.is_active = False
 
       if app is not None:
          self.init_app(app)
@@ -35,6 +35,7 @@ class Trader_bot(threading.Thread):
 
       logger.info("Trader bot started")
 
+      self.is_active = True
       while True:
          while self.is_active:
             binance_api = Binance_api(self.app.config['BINANCE_API_KEY'], self.app.config['BINANCE_SECRET_KEY'])
