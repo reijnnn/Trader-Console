@@ -3,6 +3,8 @@ env/
 .venv/
 venv/
 
+.idea/
+
 gunicorn.pid
 nohup.out
 

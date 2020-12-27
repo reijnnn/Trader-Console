@@ -19,7 +19,8 @@ Before running, change the web application parameters in the file `config.py` or
 
 Use command `python manage.py --help` for help
 
-By default `manage.py` use `config.py`. To set another config use `--config` or `-c` flag
+By default `manage.py` use `config.py`. To set another config use `--config` or `-c` flag  
+By default application run in production mode. To run migration or testing use `--mode` or `-m` flag
 
 Put your common management tasks in this file.
 Migration commands already available with `db` prefix.
@@ -32,13 +33,13 @@ By default `manage.py` has these commands:
 
 Run the following commands to create application database tables and perform the initial migration
 ```
-python manage.py -c config_dev.py db init
-python manage.py -c config_dev.py db migrate -m "Init migration"
-python manage.py -c config_dev.py db upgrade
+python manage.py -c config_dev.py -m migration db init
+python manage.py -c config_dev.py -m migration db migrate -m "Init migration"
+python manage.py -c config_dev.py -m migration db upgrade
 ```
 Run the following command to create root user with role `SUPER_ADMIN`
 ```
-python manage.py -c config_dev.py add_root_user --login root --password r00tPWD#
+python manage.py -c config_dev.py -m migration add_root_user --login root --password r00tPWD#
 ```
 
 ## How to start
@@ -58,11 +59,11 @@ kill `cat gunicorn.pid`
 
 Whenever a database migration needs to be made – run the following commands
 ```
-python manage.py -c config_dev.py db migrate
+python manage.py -c config_dev.py -m migration db migrate
 ```
 This will generate a new migration script. Then run
 ```
-python manage.py -c config_dev.py db upgrade
+python manage.py -c config_dev.py -m migration db upgrade
 ```
 To apply the migration.
 
@@ -72,4 +73,4 @@ For a full migration command reference, run `python manage.py db --help`
 
 To run all unittests use
 
-`python manage.py -c config_tst.py run_unittests`
+`python manage.py -c config_tst.py -m testing run_unittests`

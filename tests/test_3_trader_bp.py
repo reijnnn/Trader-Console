@@ -1,91 +1,92 @@
 from tests.base_test_case import BaseTestCase
-from flask                import url_for
-from trader.extensions    import trader_bot
+from flask import url_for
+from trader.extensions import trader_bot
 
-class TestTradermBP(BaseTestCase):
-   @classmethod
-   def setUpClass(self):
-      self._init_app(self)
-      self._init_db(self)
-      self._print_test_desc(self, __name__)
 
-   def setUp(self):
-      self._logout()
+class TestTraderBP(BaseTestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls._init_app(cls)
+        cls._init_db(cls)
+        cls._print_test_desc(cls, __name__)
 
-   def tearDown(self):
-      pass
+    def setUp(self):
+        self._logout()
 
-   def common_error_access(self):
-      with self.app.test_request_context():
-         # monitor_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+    def tearDown(self):
+        pass
 
-         self.assertEqual(trader_bot.get_status(), 'inactive')
+    def common_error_access(self):
+        with self.app.test_request_context():
+            # monitor_trader_bot.GET
+            page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # start_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
-         self.assertNotEqual(trader_bot.get_status(), 'active')
+            self.assertEqual(trader_bot.get_status(), 'inactive')
 
-         trader_bot.restart()
+            # start_trader_bot.GET
+            self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
+            self.assertNotEqual(trader_bot.get_status(), 'active')
 
-         # stop_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
-         self.assertNotEqual(trader_bot.get_status(), 'inactive')
+            trader_bot.restart()
 
-         trader_bot.cancel()
+            # stop_trader_bot.GET
+            self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
+            self.assertNotEqual(trader_bot.get_status(), 'inactive')
 
-   def test_access(self):
-      self.common_error_access()
+            trader_bot.cancel()
 
-   def test_super_admin(self):
-      self._create_super_admin()
-      self._login(self.SUPER_ADMIN_LOGIN, self.SUPER_ADMIN_PASSWORD)
+    def test_access(self):
+        self.common_error_access()
 
-      with self.app.test_request_context():
-         # monitor_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+    def test_super_admin(self):
+        self._create_super_admin()
+        self._login(self.SUPER_ADMIN_LOGIN, self.SUPER_ADMIN_PASSWORD)
 
-         self.assertEqual(trader_bot.get_status(), 'inactive')
+        with self.app.test_request_context():
+            # monitor_trader_bot.GET
+            page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # start_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
-         self.assertEqual(trader_bot.get_status(), 'active')
+            self.assertEqual(trader_bot.get_status(), 'inactive')
 
-         # stop_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
-         self.assertEqual(trader_bot.get_status(), 'inactive')
+            # start_trader_bot.GET
+            self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
+            self.assertEqual(trader_bot.get_status(), 'active')
 
-   def test_admin(self):
-      self._create_admin()
-      self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
+            # stop_trader_bot.GET
+            self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
+            self.assertEqual(trader_bot.get_status(), 'inactive')
 
-      with self.app.test_request_context():
-         # monitor_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+    def test_admin(self):
+        self._create_admin()
+        self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
 
-         self.assertEqual(trader_bot.get_status(), 'inactive')
+        with self.app.test_request_context():
+            # monitor_trader_bot.GET
+            page = self.client.get(url_for('trader_bot.monitor_trader_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # start_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
-         self.assertNotEqual(trader_bot.get_status(), 'active')
+            self.assertEqual(trader_bot.get_status(), 'inactive')
 
-         trader_bot.restart()
+            # start_trader_bot.GET
+            self.client.get(url_for('trader_bot.start_trader_bot'), follow_redirects=False)
+            self.assertNotEqual(trader_bot.get_status(), 'active')
 
-         # stop_trader_bot.GET
-         page = self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
-         self.assertNotEqual(trader_bot.get_status(), 'inactive')
+            trader_bot.restart()
 
-         trader_bot.cancel()
+            # stop_trader_bot.GET
+            self.client.get(url_for('trader_bot.stop_trader_bot'), follow_redirects=False)
+            self.assertNotEqual(trader_bot.get_status(), 'inactive')
 
-   def test_user(self):
-      self._create_user()
-      self._login(self.USER_LOGIN, self.USER_PASSWORD)
-      self.common_error_access()
+            trader_bot.cancel()
 
-   def test_group(self):
-      self._create_group()
-      self._login(self.GROUP_LOGIN, self.GROUP_PASSWORD)
-      self.common_error_access()
+    def test_user(self):
+        self._create_user()
+        self._login(self.USER_LOGIN, self.USER_PASSWORD)
+        self.common_error_access()
+
+    def test_group(self):
+        self._create_group()
+        self._login(self.GROUP_LOGIN, self.GROUP_PASSWORD)
+        self.common_error_access()

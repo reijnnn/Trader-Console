@@ -1,89 +1,90 @@
 from tests.base_test_case import BaseTestCase
-from flask                import url_for
-from trader.extensions    import telegram_bot
+from flask import url_for
+from trader.extensions import telegram_bot
+
 
 class TestTelegramBP(BaseTestCase):
-   @classmethod
-   def setUpClass(self):
-      self._init_app(self)
-      self._init_db(self)
-      self._print_test_desc(self, __name__)
+    @classmethod
+    def setUpClass(cls):
+        cls._init_app(cls)
+        cls._init_db(cls)
+        cls._print_test_desc(cls, __name__)
 
-   def setUp(self):
-      self._logout()
+    def setUp(self):
+        self._logout()
 
-   def tearDown(self):
-      pass
+    def tearDown(self):
+        pass
 
-   def common_error_access(self):
-      with self.app.test_request_context():
-         self.assertEqual(telegram_bot.get_status(), 'inactive')
+    def common_error_access(self):
+        with self.app.test_request_context():
+            self.assertEqual(telegram_bot.get_status(), 'inactive')
 
-         # start_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.start_telegram_bot'), follow_redirects=False)
-         self.assertNotEqual(telegram_bot.get_status(), 'active')
+            # start_telegram_bot.GET
+            self.client.get(url_for('telegram_bot.start_telegram_bot'), follow_redirects=False)
+            self.assertNotEqual(telegram_bot.get_status(), 'active')
 
-         telegram_bot.restart()
+            telegram_bot.restart()
 
-         # stop_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.stop_telegram_bot'), follow_redirects=False)
-         self.assertNotEqual(telegram_bot.get_status(), 'inactive')
+            # stop_telegram_bot.GET
+            self.client.get(url_for('telegram_bot.stop_telegram_bot'), follow_redirects=False)
+            self.assertNotEqual(telegram_bot.get_status(), 'inactive')
 
-         telegram_bot.cancel()
+            telegram_bot.cancel()
 
-   def test_access(self):
-      self.common_error_access()
+    def test_access(self):
+        self.common_error_access()
 
-      with self.app.test_request_context():
-         # monitor_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+        with self.app.test_request_context():
+            # monitor_telegram_bot.GET
+            page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-   def test_super_admin(self):
-      self._create_super_admin()
-      self._login(self.SUPER_ADMIN_LOGIN, self.SUPER_ADMIN_PASSWORD)
+    def test_super_admin(self):
+        self._create_super_admin()
+        self._login(self.SUPER_ADMIN_LOGIN, self.SUPER_ADMIN_PASSWORD)
 
-      with self.app.test_request_context():
-         # monitor_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+        with self.app.test_request_context():
+            # monitor_telegram_bot.GET
+            page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         self.assertEqual(telegram_bot.get_status(), 'inactive')
+            self.assertEqual(telegram_bot.get_status(), 'inactive')
 
-         # start_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.start_telegram_bot'), follow_redirects=False)
-         self.assertEqual(telegram_bot.get_status(), 'active')
+            # start_telegram_bot.GET
+            self.client.get(url_for('telegram_bot.start_telegram_bot'), follow_redirects=False)
+            self.assertEqual(telegram_bot.get_status(), 'active')
 
-         # stop_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.stop_telegram_bot'), follow_redirects=False)
-         self.assertEqual(telegram_bot.get_status(), 'inactive')
+            # stop_telegram_bot.GET
+            self.client.get(url_for('telegram_bot.stop_telegram_bot'), follow_redirects=False)
+            self.assertEqual(telegram_bot.get_status(), 'inactive')
 
-   def test_admin(self):
-      self._create_admin()
-      self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
-      self.common_error_access()
+    def test_admin(self):
+        self._create_admin()
+        self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
+        self.common_error_access()
 
-      with self.app.test_request_context():
-         # monitor_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+        with self.app.test_request_context():
+            # monitor_telegram_bot.GET
+            page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-   def test_user(self):
-      self._create_user()
-      self._login(self.USER_LOGIN, self.USER_PASSWORD)
-      self.common_error_access()
+    def test_user(self):
+        self._create_user()
+        self._login(self.USER_LOGIN, self.USER_PASSWORD)
+        self.common_error_access()
 
-      with self.app.test_request_context():
-         # monitor_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+        with self.app.test_request_context():
+            # monitor_telegram_bot.GET
+            page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-   def test_group(self):
-      self._create_group()
-      self._login(self.GROUP_LOGIN, self.GROUP_PASSWORD)
-      self.common_error_access()
+    def test_group(self):
+        self._create_group()
+        self._login(self.GROUP_LOGIN, self.GROUP_PASSWORD)
+        self.common_error_access()
 
-      with self.app.test_request_context():
-         # monitor_telegram_bot.GET
-         page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+        with self.app.test_request_context():
+            # monitor_telegram_bot.GET
+            page = self.client.get(url_for('telegram_bot.monitor_telegram_bot'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)

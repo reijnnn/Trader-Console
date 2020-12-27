@@ -1,297 +1,300 @@
 from tests.base_test_case import BaseTestCase
-from flask                import url_for
-from trader.user.models   import Users, User_role, User_status
+from flask import url_for
+from trader.user.models import UserRole, UserStatus
+
 
 class TestUserBP(BaseTestCase):
-   @classmethod
-   def setUpClass(self):
-      self._init_app(self)
-      self._init_db(self)
-      self._print_test_desc(self, __name__)
+    @classmethod
+    def setUpClass(cls):
+        cls._init_app(cls)
+        cls._init_db(cls)
+        cls._print_test_desc(cls, __name__)
 
-   def setUp(self):
-      self._logout()
+    def setUp(self):
+        self._logout()
 
-   def tearDown(self):
-      pass
+    def tearDown(self):
+        pass
 
-   def test_access(self):
-      with self.app.test_request_context():
-         # login.GET
-         page = self.client.get(url_for('user.login'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+    def test_access(self):
+        with self.app.test_request_context():
+            # login.GET
+            page = self.client.get(url_for('user.login'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # users_list.GET
-         page = self.client.get(url_for('user.users_list'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+            # users_list.GET
+            page = self.client.get(url_for('user.users_list'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # create_user.GET
-         page = self.client.get(url_for('user.create_user'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+            # create_user.GET
+            page = self.client.get(url_for('user.create_user'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # edit_user.GET
-         USER_LOGIN = self._generate_login()
-         user = self._create_new_user(login=USER_LOGIN)
+            # edit_user.GET
+            user_login = self._generate_login()
+            user = self._create_new_user(login=user_login)
 
-         page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+            page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # delete_user.GET
-         self.client.get(url_for('user.delete_user', user_id=user.id))
-         user = self._get_user_by_login(USER_LOGIN)
-         self.assertIsNotNone(user)
+            # delete_user.GET
+            self.client.get(url_for('user.delete_user', user_id=user.id))
+            user = self._get_user_by_login(user_login)
+            self.assertIsNotNone(user)
 
-   def test_super_admin(self):
-      self._create_super_admin()
+    def test_super_admin(self):
+        self._create_super_admin()
 
-      with self.app.test_request_context():
-         page = self._login(self.SUPER_ADMIN_LOGIN, self.SUPER_ADMIN_PASSWORD)
+        with self.app.test_request_context():
+            self._login(self.SUPER_ADMIN_LOGIN, self.SUPER_ADMIN_PASSWORD)
 
-         # users_list.GET
-         page = self.client.get(url_for('user.users_list'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # users_list.GET
+            page = self.client.get(url_for('user.users_list'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # create_user.GET
-         page = self.client.get(url_for('user.create_user'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # create_user.GET
+            page = self.client.get(url_for('user.create_user'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # create_user.POST | user with role "SUPER_ADMIN"
-         NEW_SUPER_ADMIN_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_SUPER_ADMIN_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.SUPER_ADMIN,
-               chat_id=None,
-               status=User_status.ACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "SUPER_ADMIN"
+            new_super_admin_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_super_admin_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.SUPER_ADMIN,
+                chat_id=None,
+                status=UserStatus.ACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_SUPER_ADMIN_LOGIN)
-         self.assertIsNone(user)
+            user = self._get_user_by_login(new_super_admin_login)
+            self.assertIsNone(user)
 
-         # create_user.POST | user with role "ADMIN"
-         NEW_ADMIN_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_ADMIN_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.ADMIN,
-               chat_id=None,
-               status=User_status.INACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "ADMIN"
+            new_admin_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_admin_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.ADMIN,
+                chat_id=None,
+                status=UserStatus.INACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_ADMIN_LOGIN)
-         self.assertIsNotNone(user)
+            user = self._get_user_by_login(new_admin_login)
+            self.assertIsNotNone(user)
 
-         # edit_user.GET
-         page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # edit_user.GET
+            page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # delete_user.GET
-         self.client.get(url_for('user.delete_user', user_id=user.id))
-         user = self._get_user_by_login(NEW_ADMIN_LOGIN)
-         self.assertIsNone(user)
+            # delete_user.GET
+            self.client.get(url_for('user.delete_user', user_id=user.id))
+            user = self._get_user_by_login(new_admin_login)
+            self.assertIsNone(user)
 
-         # create_user.POST | user with role "USER"
-         NEW_USER_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_USER_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.USER,
-               chat_id=None,
-               status=User_status.ACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "USER"
+            new_user_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_user_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.USER,
+                chat_id=None,
+                status=UserStatus.ACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_USER_LOGIN)
-         self.assertIsNotNone(user)
+            user = self._get_user_by_login(new_user_login)
+            self.assertIsNotNone(user)
 
-         # delete_user.GET
-         self.client.get(url_for('user.delete_user', user_id=user.id))
-         user = self._get_user_by_login(NEW_USER_LOGIN)
-         self.assertIsNone(user)
+            # delete_user.GET
+            self.client.get(url_for('user.delete_user', user_id=user.id))
+            user = self._get_user_by_login(new_user_login)
+            self.assertIsNone(user)
 
-         # create_user.POST | user with role "GROUP"
-         NEW_GROUP_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_GROUP_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.GROUP,
-               chat_id=None,
-               status=User_status.ACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "GROUP"
+            new_group_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_group_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.GROUP,
+                chat_id=None,
+                status=UserStatus.ACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_GROUP_LOGIN)
-         self.assertIsNotNone(user)
+            user = self._get_user_by_login(new_group_login)
+            self.assertIsNotNone(user)
 
-         # delete_user.GET
-         self.client.get(url_for('user.delete_user', user_id=user.id))
-         user = self._get_user_by_login(NEW_GROUP_LOGIN)
-         self.assertIsNone(user)
+            # delete_user.GET
+            self.client.get(url_for('user.delete_user', user_id=user.id))
+            user = self._get_user_by_login(new_group_login)
+            self.assertIsNone(user)
 
-   def test_admin(self):
-      self._create_admin()
+    def test_admin(self):
+        self._create_admin()
 
-      with self.app.test_request_context():
-         page = self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
+        with self.app.test_request_context():
+            self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
 
-         # users_list.GET
-         page = self.client.get(url_for('user.users_list'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # users_list.GET
+            page = self.client.get(url_for('user.users_list'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # create_user.GET
-         page = self.client.get(url_for('user.create_user'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # create_user.GET
+            page = self.client.get(url_for('user.create_user'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # create_user.POST | user with role "ADMIN"
-         NEW_ADMIN_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_ADMIN_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.ADMIN,
-               chat_id=None,
-               status=User_status.INACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "ADMIN"
+            new_admin_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_admin_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.ADMIN,
+                chat_id=None,
+                status=UserStatus.INACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_ADMIN_LOGIN)
-         self.assertIsNotNone(user)
+            user = self._get_user_by_login(new_admin_login)
+            self.assertIsNotNone(user)
 
-         # edit_user.GET
-         page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # edit_user.GET
+            page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # delete_user.GET
-         self.client.get(url_for('user.delete_user', user_id=user.id))
-         user = self._get_user_by_login(NEW_ADMIN_LOGIN)
-         self.assertIsNone(user)
+            # delete_user.GET
+            self.client.get(url_for('user.delete_user', user_id=user.id))
+            user = self._get_user_by_login(new_admin_login)
+            self.assertIsNone(user)
 
-         # create_user.POST | user with role "USER"
-         NEW_USER_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_USER_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.ADMIN,
-               chat_id=None,
-               status=User_status.INACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "USER"
+            new_user_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_user_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.ADMIN,
+                chat_id=None,
+                status=UserStatus.INACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_USER_LOGIN)
-         self.assertIsNotNone(user)
+            user = self._get_user_by_login(new_user_login)
+            self.assertIsNotNone(user)
 
-         # edit_user.GET
-         page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # edit_user.GET
+            page = self.client.get(url_for('user.edit_user', user_id=user.id), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # edit_user.POST
-         EDIT_ROLE     = User_role.USER
-         EDIT_STATUS   = User_status.ACTIVE
-         EDIT_CHAT_ID  = -99
-         EDIT_PASSWORD = 'EDIT_PASSWORD'
+            # edit_user.POST
+            edit_role = UserRole.USER
+            edit_status = UserStatus.ACTIVE
+            edit_chat_id = -99
+            edit_password = 'EDIT_PASSWORD'
 
-         page = self.client.post(url_for('user.edit_user', user_id=user.id), data=dict(
-               login=NEW_USER_LOGIN,
-               password=EDIT_PASSWORD,
-               role=EDIT_ROLE,
-               chat_id=EDIT_CHAT_ID,
-               status=EDIT_STATUS,
-               user_id=user.id
-         ), follow_redirects=True)
+            self.client.post(url_for('user.edit_user', user_id=user.id), data=dict(
+                login=new_user_login,
+                password=edit_password,
+                role=edit_role,
+                chat_id=edit_chat_id,
+                status=edit_status,
+                user_id=user.id
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_USER_LOGIN)
-         self.assertIsNotNone(user)
-         self.assertEqual(EDIT_ROLE, user.role)
-         self.assertEqual(EDIT_STATUS, user.status)
-         self.assertEqual(EDIT_CHAT_ID, user.telegram_id)
+            user = self._get_user_by_login(new_user_login)
+            self.assertIsNotNone(user)
+            self.assertEqual(edit_role, user.role)
+            self.assertEqual(edit_status, user.status)
+            self.assertEqual(edit_chat_id, user.telegram_id)
 
-         # check new password
-         self._login(NEW_USER_LOGIN, EDIT_PASSWORD)
+            # check new password
+            self._login(new_user_login, edit_password)
 
-         page = self.client.get(url_for('frontend.index'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            page = self.client.get(url_for('frontend.index'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
+            self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
 
-         # reset_password_user.GET
-         page = self.client.get(url_for('user.reset_password_user', user_id=user.id), follow_redirects=False)
+            # reset_password_user.GET
+            self.client.get(url_for('user.reset_password_user', user_id=user.id), follow_redirects=False)
 
-         user = self._get_user_by_login(NEW_USER_LOGIN)
-         self.assertEqual(user.status, User_status.RESET)
-         self.assertIsNotNone(user.reset_code)
+            user = self._get_user_by_login(new_user_login)
+            self.assertEqual(user.status, UserStatus.RESET)
+            self.assertIsNotNone(user.reset_code)
 
-         self._logout()
+            self._logout()
 
-         # change_password_user.GET
-         page = self.client.get(url_for('user.change_password_user', user_id=user.id, reset_code=user.reset_code), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            # change_password_user.GET
+            page = self.client.get(url_for('user.change_password_user', user_id=user.id, reset_code=user.reset_code),
+                                   follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         # change_password_user.POST
-         NEW_PASSWORD = 'NEW_PASSWORD'
-         page = self.client.post(url_for('user.change_password_user', user_id=user.id, reset_code=user.reset_code), data=dict(
-               login=NEW_USER_LOGIN,
-               password=NEW_PASSWORD,
-               confirm=NEW_PASSWORD
-         ), follow_redirects=True)
+            # change_password_user.POST
+            new_password = 'NEW_PASSWORD1'
+            self.client.post(url_for('user.change_password_user', user_id=user.id, reset_code=user.reset_code),
+                             data=dict(
+                                        login=new_user_login,
+                                        password=new_password,
+                                        confirm=new_password
+                                    ), follow_redirects=True)
 
-         # check new password
-         self._login(NEW_USER_LOGIN, NEW_PASSWORD)
+            # check new password
+            self._login(new_user_login, new_password)
 
-         page = self.client.get(url_for('frontend.index'), follow_redirects=False)
-         self.assertEqual(page.status_code, 200)
+            page = self.client.get(url_for('frontend.index'), follow_redirects=False)
+            self.assertEqual(page.status_code, 200)
 
-         self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
+            self._login(self.ADMIN_LOGIN, self.ADMIN_PASSWORD)
 
-         # delete_user.GET
-         self.client.get(url_for('user.delete_user', user_id=user.id))
-         user = self._get_user_by_login(NEW_USER_LOGIN)
-         self.assertIsNone(user)
+            # delete_user.GET
+            self.client.get(url_for('user.delete_user', user_id=user.id))
+            user = self._get_user_by_login(new_user_login)
+            self.assertIsNone(user)
 
-   def test_user(self):
-      self._create_user()
+    def test_user(self):
+        self._create_user()
 
-      with self.app.test_request_context():
-         page = self._login(self.USER_LOGIN, self.USER_PASSWORD)
+        with self.app.test_request_context():
+            self._login(self.USER_LOGIN, self.USER_PASSWORD)
 
-         # users_list.GET
-         page = self.client.get(url_for('user.users_list'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+            # users_list.GET
+            page = self.client.get(url_for('user.users_list'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # create_user.GET
-         page = self.client.get(url_for('user.create_user'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+            # create_user.GET
+            page = self.client.get(url_for('user.create_user'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # create_user.POST | user with role "USER"
-         NEW_USER_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_USER_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.USER,
-               chat_id=None,
-               status=User_status.ACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "USER"
+            new_user_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_user_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.USER,
+                chat_id=None,
+                status=UserStatus.ACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_USER_LOGIN)
-         self.assertIsNone(user)
+            user = self._get_user_by_login(new_user_login)
+            self.assertIsNone(user)
 
-   def test_group(self):
-      self._create_group()
+    def test_group(self):
+        self._create_group()
 
-      with self.app.test_request_context():
-         page = self._login(self.GROUP_LOGIN, self.GROUP_PASSWORD)
+        with self.app.test_request_context():
+            self._login(self.GROUP_LOGIN, self.GROUP_PASSWORD)
 
-         # users_list.GET
-         page = self.client.get(url_for('user.users_list'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+            # users_list.GET
+            page = self.client.get(url_for('user.users_list'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # create_user.GET
-         page = self.client.get(url_for('user.create_user'), follow_redirects=False)
-         self.assertEqual(page.status_code, 302)
+            # create_user.GET
+            page = self.client.get(url_for('user.create_user'), follow_redirects=False)
+            self.assertEqual(page.status_code, 302)
 
-         # create_user.POST | user with role "GROUP"
-         NEW_GROUP_LOGIN = self._generate_login()
-         page = self.client.post(url_for('user.create_user'), data=dict(
-               login=NEW_GROUP_LOGIN,
-               password=self.COMMON_PASSWORD,
-               role=User_role.GROUP,
-               chat_id=None,
-               status=User_status.ACTIVE
-         ), follow_redirects=True)
+            # create_user.POST | user with role "GROUP"
+            new_group_login = self._generate_login()
+            self.client.post(url_for('user.create_user'), data=dict(
+                login=new_group_login,
+                password=self.COMMON_PASSWORD,
+                role=UserRole.GROUP,
+                chat_id=None,
+                status=UserStatus.ACTIVE
+            ), follow_redirects=True)
 
-         user = self._get_user_by_login(NEW_GROUP_LOGIN)
-         self.assertIsNone(user)
+            user = self._get_user_by_login(new_group_login)
+            self.assertIsNone(user)
