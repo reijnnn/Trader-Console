@@ -1,6 +1,7 @@
 from flask import render_template, flash, request, Blueprint, current_app
 from flask_login import login_user, logout_user, login_required
 from ..extensions import login_manager, logger, db
+from ..utils.pagination import Pagination
 from ..telegram_bot.notifications_service import add_notification
 from .forms import LoginForm, CreateUserForm, EditUserForm, ResetPasswordForm
 from .models import Users, UserStatus
@@ -113,16 +114,37 @@ def edit_user(user_id):
         return render_template('create_user.html', form=form)
 
 
-@user_bp.route('/users_list')
+@user_bp.route('/users_list/', defaults={'page': 1})
+@user_bp.route('/users_list/<int:page>')
 @login_required
 @is_admin
-def users_list():
+def users_list(page):
     query = db.session.query(Users)
+
+    search = request.args.get('search')
+    if search:
+        search = '%' + search + '%'
+        query = query.filter(or_(Users.login.ilike(search),
+                                 Users.telegram_id.ilike(search),
+                                 Users.status.ilike(search),
+                                 Users.role.ilike(search)))
+
+    total_count = query.count()
+
     if not current_user.is_super_admin:
         query = query.filter(or_(Users.owner_id == current_user.id, Users.id == current_user.id))
+
+    query = query.order_by(Users.id).offset((page - 1) * current_app.config['PAGINATION_PAGE_SIZE']). \
+        limit(current_app.config['PAGINATION_PAGE_SIZE'])
+
     users_list = query.all()
 
-    return render_template('users_list.html', users_list=users_list, roles=UserRole)
+    pagination = Pagination(page=page,
+                            per_page=current_app.config['PAGINATION_PAGE_SIZE'],
+                            total_count=total_count,
+                            filter_text=search)
+
+    return render_template('users_list.html', users_list=users_list, roles=UserRole, pagination=pagination)
 
 
 @user_bp.route('/delete_user/<user_id>')
