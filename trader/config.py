@@ -9,6 +9,8 @@ HOST = '127.0.0.1'
 PORT = 8085
 DOMAIN_NAME = 'DOMAIN_NAME'
 
+JSON_SORT_KEYS = False
+
 # ''.join([choice(ascii_letters + digits) for n in range(64)])
 SECRET_KEY = 'RANDOM_SECRET_KEY'
 WTF_CSRF_SECRET_KEY = 'RANDOM_WTF_CSRF_SECRET_KEY'

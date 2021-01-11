@@ -1,6 +1,6 @@
 from ..extensions import logger, proxy_bot
 from ..task.task import Task
-from ..user.users_service import get_telegram_users
+from ..user.users_service import is_authorized_telegram_id
 from ..proxy_bot.proxies_service import get_proxy
 from .notifications_service import get_queue_notifications, update_notification_status
 import requests
@@ -126,9 +126,7 @@ class TelegramBot(threading.Thread):
                                                'text': 'pong'})
                             continue
 
-                        telegram_users_list = get_telegram_users()
-
-                        if chat_id not in telegram_users_list:
+                        if not is_authorized_telegram_id(chat_id):
                             logger.info('Unknown user try to send msg: {}'.format(update['message']))
                             self.send_message({'chat_id': chat_id,
                                                'text': 'You are not authorized to access this bot'})

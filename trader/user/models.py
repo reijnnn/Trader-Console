@@ -13,7 +13,7 @@ class UserRole:
     SUPER_ADMIN = 'SUPER_ADMIN'
 
     @staticmethod
-    def get_new_user_roles_list():
+    def get_new_user_role_list():
         return ['GROUP', 'USER', 'ADMIN']
 
 
@@ -23,7 +23,7 @@ class UserStatus:
     RESET = 'RESET'
 
     @staticmethod
-    def get_new_user_statuses_list():
+    def get_new_user_status_list():
         return ['ACTIVE', 'INACTIVE']
 
 

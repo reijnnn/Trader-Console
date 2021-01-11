@@ -7,14 +7,14 @@ from .models import Users, UserRole, UserStatus
 
 class LoginForm(FlaskForm):
     login = StringField('Login', validators=[DataRequired(), Length(min=4, max=20)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=4, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=20)])
     remember = BooleanField('Remember me')
     submit = SubmitField('Login')
 
 
 class CreateUserForm(FlaskForm):
     login = StringField('Login', validators=[DataRequired(), Length(min=4, max=20)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=4, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=20)])
     role = SelectField('Role', choices=[])
     chat_id = StringField('Chat_id')
     status = SelectField('Status', choices=[])
@@ -23,8 +23,8 @@ class CreateUserForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(CreateUserForm, self).__init__(*args, **kwargs)
-        self.role.choices = [(role, role) for role in UserRole.get_new_user_roles_list()]
-        self.status.choices = [(status, status) for status in UserStatus.get_new_user_statuses_list()]
+        self.role.choices = [(role, role) for role in UserRole.get_new_user_role_list()]
+        self.status.choices = [(status, status) for status in UserStatus.get_new_user_status_list()]
 
     def validate(self):
         initial_validation = super(CreateUserForm, self).validate()
@@ -57,16 +57,16 @@ class EditUserForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(EditUserForm, self).__init__(*args, **kwargs)
-        self.role.choices = [(role, role) for role in UserRole.get_new_user_roles_list()]
-        self.status.choices = [(status, status) for status in UserStatus.get_new_user_statuses_list()]
+        self.role.choices = [(role, role) for role in UserRole.get_new_user_role_list()]
+        self.status.choices = [(status, status) for status in UserStatus.get_new_user_status_list()]
 
     def validate(self):
         initial_validation = super(EditUserForm, self).validate()
         if not initial_validation:
             return False
 
-        if self.password.data and (len(self.password.data) < 4 or len(self.password.data) > 20):
-            self.password.errors.append("Field must be between 4 and 20 characters long.")
+        if self.password.data and (len(self.password.data) < 6 or len(self.password.data) > 20):
+            self.password.errors.append("Field must be between 6 and 20 characters long.")
             return False
 
         if self.chat_id.data:
@@ -81,7 +81,7 @@ class EditUserForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     login = StringField('Login', validators=[DataRequired(), Length(min=4, max=20)], render_kw={'readonly': True})
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=4, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=20)])
     confirm = PasswordField('Verify password',
                             validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
     submit = SubmitField('Save')

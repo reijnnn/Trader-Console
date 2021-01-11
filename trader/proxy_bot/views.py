@@ -5,6 +5,7 @@ from ..extensions import db, proxy_bot, logger
 from ..user.decorators import *
 from ..utils.pagination import Pagination
 from .models import Proxies
+from .proxies_service import get_proxy
 
 proxy_bot_bp = Blueprint('proxy_bot', __name__, template_folder='templates')
 
@@ -104,7 +105,7 @@ def add_proxy():
 @login_required
 @is_super_admin
 def delete_proxy(proxy_id):
-    proxy = db.session.query(Proxies).filter_by(proxy_id=proxy_id).first()
+    proxy = get_proxy(proxy_id)
     if not proxy:
         flash("Proxy not found", 'info')
         return redirect(url_for('proxy_bot.monitor_proxy_bot'))

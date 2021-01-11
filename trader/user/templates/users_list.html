@@ -126,8 +126,8 @@
       $('#modal-send-message').on('show.bs.modal', function (event) {
          var user_row = $(event.relatedTarget).closest('tr');
 
-         var id      = $('td:eq(0)', user_row).text();
-         var login   = $('td:eq(1)', user_row).text();
+         var id = $('td:eq(0)', user_row).text();
+         var login = $('td:eq(1)', user_row).text();
          var chat_id = $('td:eq(3)', user_row).text();
 
          var modal = $(this);

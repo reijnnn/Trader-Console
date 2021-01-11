@@ -5,8 +5,7 @@ from datetime import datetime, timedelta
 
 
 def get_active_tasks():
-    active_tasks = db.session.query(Tasks).filter_by(task_status=TaskStatus.ACTIVE).all()
-    return active_tasks
+    return db.session.query(Tasks).filter_by(task_status=TaskStatus.ACTIVE).all()
 
 
 def complete_task(task_id):
@@ -25,8 +24,7 @@ def drop_task(task_id):
 
 
 def get_task(task_id):
-    task = db.session.query(Tasks).filter_by(task_id=task_id).first()
-    return task
+    return db.session.query(Tasks).filter_by(task_id=task_id).first()
 
 
 def add_task_error(task_id):

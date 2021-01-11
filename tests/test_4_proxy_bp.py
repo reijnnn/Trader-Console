@@ -38,23 +38,23 @@ class TestProxyBP(BaseTestCase):
 
             proxy_bot.cancel()
 
-            cnt_proxy = self.db.session.query(Proxies).count()
+            cnt_proxy = self._get_proxies_count()
 
             # add_proxy.POST
             self.client.post(url_for('proxy_bot.add_proxy'), data=dict(
                 proxy_list='https:127.0.0.1:8081;https:127.0.0.1:8082',
             ), follow_redirects=False)
 
-            cnt_proxy_upd = self.db.session.query(Proxies).count()
+            cnt_proxy_upd = self._get_proxies_count()
             self.assertEqual(cnt_proxy, cnt_proxy_upd)
 
             proxy = self._create_proxy()
-            cnt_proxy = self.db.session.query(Proxies).count()
+            cnt_proxy = self._get_proxies_count()
 
             # delete_proxy.GET
             self.client.get(url_for('proxy_bot.delete_proxy', proxy_id=proxy.proxy_id), follow_redirects=False)
 
-            cnt_proxy_upd = self.db.session.query(Proxies).count()
+            cnt_proxy_upd = self._get_proxies_count()
             self.assertEqual(cnt_proxy, cnt_proxy_upd)
 
     def test_access(self):
@@ -79,7 +79,7 @@ class TestProxyBP(BaseTestCase):
             self.client.get(url_for('proxy_bot.stop_proxy_bot'), follow_redirects=False)
             self.assertEqual(proxy_bot.get_status(), 'inactive')
 
-            cnt_proxy = self.db.session.query(Proxies).count()
+            cnt_proxy = self._get_proxies_count()
 
             # add_proxy.POST
             self.client.post(url_for('proxy_bot.add_proxy'), data=dict(
@@ -91,16 +91,16 @@ class TestProxyBP(BaseTestCase):
                 proxy_list='https:127.0.0.1:8081;sock:127.0.0.1',
             ), follow_redirects=False)
 
-            cnt_proxy_upd = self.db.session.query(Proxies).count()
+            cnt_proxy_upd = self._get_proxies_count()
             self.assertEqual(cnt_proxy_upd - cnt_proxy, 2)
 
             proxy = self._create_proxy()
-            cnt_proxy = self.db.session.query(Proxies).count()
+            cnt_proxy = self._get_proxies_count()
 
             # delete_proxy.GET
             self.client.get(url_for('proxy_bot.delete_proxy', proxy_id=proxy.proxy_id), follow_redirects=False)
 
-            cnt_proxy_upd = self.db.session.query(Proxies).count()
+            cnt_proxy_upd = self._get_proxies_count()
             self.assertEqual(cnt_proxy - cnt_proxy_upd, 1)
 
     def test_admin(self):

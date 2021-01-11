@@ -13,7 +13,14 @@ from ..task.tasks_service import (
 from ..utils.helper import wrap_code, escape_text
 from ..telegram_bot.notifications_service import add_notification
 from .binance_api import BinanceApi
-from .strategies import Strategies
+from .strategies import (
+    Alert,
+    Price,
+    Volume,
+    Envelope,
+    DumpPriceHistory,
+    StrategyType,
+)
 
 
 class TraderBot(threading.Thread):
@@ -60,18 +67,21 @@ class TraderBot(threading.Thread):
                             continue
 
                         try:
-                            call_strategy = Strategies(api=binance_api)
-
-                            if task.task_name == 'alert':
-                                call_strategy.strategy_alert(task.task_id)
-                            if task.task_name == 'envelope':
-                                call_strategy.strategy_envelope(task.task_id)
-                            if task.task_name == 'price':
-                                call_strategy.strategy_price(task.task_id)
-                            if task.task_name == 'volume':
-                                call_strategy.strategy_volume(task.task_id)
-                            if task.task_name == 'dump_price_history':
-                                call_strategy.strategy_dump_price_history(task.task_id)
+                            if task.task_name == StrategyType.ALERT:
+                                strategy = Alert(api=binance_api)
+                                strategy.execute(task.task_id)
+                            if task.task_name == StrategyType.ENVELOPE:
+                                strategy = Envelope(api=binance_api)
+                                strategy.execute(task.task_id)
+                            if task.task_name == StrategyType.PRICE:
+                                strategy = Price(api=binance_api)
+                                strategy.execute(task.task_id)
+                            if task.task_name == StrategyType.VOLUME:
+                                strategy = Volume(api=binance_api)
+                                strategy.execute(task.task_id)
+                            if task.task_name == StrategyType.DUMP_PRICE_HISTORY:
+                                strategy = DumpPriceHistory(api=binance_api)
+                                strategy.execute(task.task_id)
 
                             update_task_exec_time(task.task_id)
                         except Exception as e:

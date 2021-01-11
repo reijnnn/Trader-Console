@@ -10,6 +10,14 @@
       <div class="panel-heading">
          Tasks
       </div>
+
+      <ul class="nav nav-pills">
+         {% for strategy_type in strategy_type_list %}
+            <li><a href="" title="Create task {{ strategy_type }}" data-toggle="modal" data-target="#modal-modify-task" data-task-name="{{ strategy_type}}">{{ strategy_type|upper }}</a></li>
+         {% endfor %}
+      </ul>
+      <hr />
+
       <div class="content-box-large">
          <div class="panel-body">
             {% include 'flashes.html' %}
@@ -24,6 +32,7 @@
                         <th>Date</th>
                         <th>Exec date</th>
                         <th>Chat_id</th>
+                        <th></th>
                         <th></th>
                      </tr>
                   </thead>
@@ -42,11 +51,51 @@
                               <a title="Delete" class="confirm-delete" href="{{ url_for('task.cancel_active_task', task_id=task['task_id']) }}"><i class="glyphicon glyphicon-remove"></i></a>
                            {% endif %}
                         </td>
+                        <td>
+                           {% if task['task_status'] == 'ACTIVE' %}
+                              <a title="Edit" href="" data-toggle="modal" data-target="#modal-modify-task" data-task-name="{{ task['task_name'] }}" data-task-id="{{ task['task_id'] }}"><i class="glyphicon glyphicon-edit"></i></a>
+                           {% endif %}
+                        </td>
                      </tr>
                      {% endfor %}
                   </tbody>
                </table>
             </div>
+
+             <div class="modal fade" id="modal-modify-task" tabindex="-1" role="dialog" >
+               <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Modify task</h4>
+                     </div>
+                     <div class="modal-body">
+                        <div id="modifyTaskErrorMsg" class="alert alert-danger hidden" role="alert"></div>
+
+                        {% from "form_utils.html" import render_field %}
+
+                        <form id="form-modify-task" role="form" name="modify_task" method="post" action="">
+                           <div class="form-group">
+                              <label for="modifyTaskInputParams" class="control-label">{{ form.task_params.label }}</label>
+                              {{ render_field(form.task_params, class_="form-control", placeholder='Description', id='modifyTaskInputParams', rows='10') }}
+                           </div>
+                           <div class="form-group">
+                              <label for="modifyTaskInputUser" class="control-label">{{ form.user.label }}</label>
+                              {{ render_field(form.user, class_="form-control", id='modifyTaskInputUser') }}
+                           </div>
+                           {{ form.task_id(type='hidden', id='modifyTaskInputId') }}
+                           {{ form.task_name(type='hidden', id='modifyTaskInputName') }}
+                           {{ form.hidden_tag() }}
+                        </form>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        {{ form.submit(class_="btn btn-primary", form="form-modify-task") }}
+                     </div>
+                  </div>
+               </div>
+            </div>
+
             <hr />
 
             {% import 'pagination.html' as paging %}
@@ -56,4 +105,87 @@
       </div>
    </div>
 
+{% endblock %}
+
+{% block js %}
+   <script>
+      function prepare_create_task_params(task_name, params) {
+         var task_params = {};
+         for(param in params) {
+            param_name = param + (params[param]['required'] ? '(required)' : '');
+            if(param == 'strategy') {
+               task_params[param_name] = task_name;
+            } else if(param == 'id') {
+               continue;
+            } else {
+               task_params[param_name] = params[param]['default'] || '';
+            }
+         }
+         return JSON.stringify(task_params, null, '\t');
+      }
+
+      function prepare_edit_task_params(task_name, params) {
+         var task_params = {};
+         for(param in params) {
+            task_params[param] = params[param] || '';
+         }
+         return JSON.stringify(task_params, null, '\t');
+      }
+
+      function render_create_task_modal(user_id, task_name, task_params, url) {
+         $('#form-modify-task').attr('action', url);
+         $("#modal-modify-task .modal-title").html(`Create task <strong>${task_name.toUpperCase()}</strong>`);
+         $("#modifyTaskInputParams").text(task_params);
+         $("#modifyTaskInputUser").val(user_id);
+      }
+
+      function render_edit_task_modal(user_id, task_name, task_id, task_params, url) {
+         $('#form-modify-task').attr('action', url);
+         $("#modal-modify-task .modal-title").html(`Edit task <strong>${task_name.toUpperCase()}[${task_id}]</strong>`);
+         $("#modifyTaskInputParams").text(task_params);
+         $("#modifyTaskInputUser").val(user_id);
+         $("#modifyTaskInputId").val(task_id);
+      }
+
+      function render_error_modal(error_description) {
+         $("#modifyTaskInputParams").text('');
+         $("#modifyTaskErrorMsg").html('Error. ' + error_description);
+         $("#modifyTaskErrorMsg").removeClass('hidden');
+      }
+
+      var url_create_task = "{{ url_for('task.create_task') }}";
+      var url_edit_task = "{{ url_for('task.edit_task') }}";
+
+      $('#modal-modify-task').on('show.bs.modal', function (event) {
+         $("#modifyTaskErrorMsg").addClass('hidden');
+
+         var task_name = $(event.relatedTarget).attr('data-task-name');
+         var task_id = $(event.relatedTarget).attr('data-task-id');
+
+         $.ajax({
+             url: "{{ url_for('task.get_config_task') }}",
+             data : {task_name: task_name, task_id: task_id},
+             type: "GET",
+             success: function(response) {
+                  if(!response['params']) {
+                     render_error_modal('Incorrect task');
+                  } else {
+                     user_id = response['user_id'];
+                     params = response['params'];
+
+                     if(task_id) {
+                        task_params = prepare_edit_task_params(task_name, params);
+                        render_edit_task_modal(user_id, task_name, task_id, task_params, url_edit_task);
+                     } else {
+                        task_params = prepare_create_task_params(task_name, params);
+                        render_create_task_modal(user_id, task_name, task_params, url_create_task);
+                     }
+                  }
+             },
+             error: function(xhr) {
+                  render_error_modal(xhr);
+             }
+         });
+      });
+   </script>
 {% endblock %}

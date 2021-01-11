@@ -4,6 +4,7 @@ import requests
 from random import randint
 from ..extensions import logger, db
 from .models import Proxies
+from .proxies_service import get_proxy
 from sqlalchemy import desc
 
 
@@ -36,7 +37,7 @@ class ProxyBot(threading.Thread):
                 time.sleep(self.app.config['PROXY_BOT_POLLING_FREQ'])
 
     def ping_proxy(self, proxy_id):
-        proxy = db.session.query(Proxies).filter_by(proxy_id=proxy_id).first()
+        proxy = get_proxy(proxy_id)
 
         if proxy is None:
             return False

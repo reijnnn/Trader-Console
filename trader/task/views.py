@@ -1,12 +1,24 @@
-from flask import render_template, flash, request, Blueprint, current_app
+from flask import render_template, flash, request, Blueprint, current_app, jsonify
 from flask_login import login_required
 from sqlalchemy import desc, or_
-from ..extensions import db
+from ..extensions import db, logger
 from ..user.decorators import *
+from ..user.users_service import get_user_by_id, get_user_by_telegram_id, check_user_permission
 from ..telegram_bot.notifications_service import add_notification
 from ..utils.pagination import Pagination
+from ..trader_bot.strategies import (
+    Alert,
+    Price,
+    Volume,
+    Envelope,
+    DumpPriceHistory,
+    StrategyType,
+)
 from .models import Tasks, TaskStatus
 from .tasks_service import get_task, cancel_task
+from .task import Task
+from .forms import ModifyTaskForm
+from json import loads
 
 task_bp = Blueprint('task', __name__, template_folder='templates')
 
@@ -43,7 +55,113 @@ def monitor_tasks(page):
                             total_count=total_count,
                             filter_text=search)
 
-    return render_template('tasks.html', tasks=tasks, pagination=pagination)
+    form = ModifyTaskForm(request.form)
+
+    return render_template('tasks.html', tasks=tasks, pagination=pagination,
+                           strategy_type_list=StrategyType.get_strategy_type_list(),
+                           form=form)
+
+
+@task_bp.route('/create_task', methods=['POST'])
+@login_required
+def create_task():
+    form = ModifyTaskForm(request.form)
+
+    if form.validate_on_submit():
+        create_cmd = "/task create"
+        param_suffix = '(required)'
+
+        task_params = loads(form.task_params.data)
+        for param in task_params:
+            if param.endswith(param_suffix):
+                strip_param = param[:-len(param_suffix)]
+            else:
+                strip_param = param
+
+            create_cmd += " {}={}".format(strip_param, task_params[param])
+
+        user = get_user_by_id(int(form.user.data))
+
+        if not check_user_permission(user):
+            flash("You don't have permission to work with this user", 'info')
+            return redirect(url_for('task.monitor_tasks'))
+
+        if user.telegram_id:
+            logger.debug(create_cmd)
+            Task(create_cmd, chat_id=user.telegram_id, from_ui=True)
+        else:
+            flash('User "{}" does not have telegram_id'.format(user.login), 'warning')
+
+    return redirect(url_for('task.monitor_tasks'))
+
+
+@task_bp.route('/edit_task', methods=['POST'])
+@login_required
+def edit_task():
+    form = ModifyTaskForm(request.form)
+
+    if form.validate_on_submit():
+        param_suffix = '(required)'
+        edit_cmd = "/task edit id={}".format(form.task_id.data)
+
+        task_params = loads(form.task_params.data)
+        for param in task_params:
+            if param.endswith(param_suffix):
+                strip_param = param[:-len(param_suffix)]
+            else:
+                strip_param = param
+
+            edit_cmd += " {}={}".format(strip_param, task_params[param])
+
+        user = get_user_by_id(int(form.user.data))
+
+        if not check_user_permission(user):
+            flash("You don't have permission to work with this user", 'info')
+            return redirect(url_for('task.monitor_tasks'))
+
+        if user.telegram_id:
+            logger.debug(edit_cmd)
+            Task(edit_cmd, chat_id=user.telegram_id, from_ui=True)
+        else:
+            flash('User "{}" does not have telegram_id'.format(user.login), 'warning')
+
+    return redirect(url_for('task.monitor_tasks'))
+
+
+@task_bp.route('/get_config_task', methods=['GET'])
+@login_required
+def get_config_task():
+    task_name = request.args.get('task_name')
+    task_id = int(request.args.get('task_id', -1))
+    task_config = {}
+
+    if task_id > 0:
+        task = get_task(task_id)
+        user = get_user_by_telegram_id(task.chat_id)
+
+        if not check_user_permission(user):
+            return jsonify(task_config)
+
+        task_config = {
+            'params': loads(task.task_params),
+            'user_id': user.id
+        }
+        return jsonify(task_config)
+
+    if task_name == StrategyType.ALERT:
+        task_config = Alert.get_config()
+    elif task_name == StrategyType.DUMP_PRICE_HISTORY:
+        task_config = DumpPriceHistory.get_config()
+    elif task_name == StrategyType.ENVELOPE:
+        task_config = Envelope.get_config()
+    elif task_name == StrategyType.PRICE:
+        task_config = Price.get_config()
+    elif task_name == StrategyType.VOLUME:
+        task_config = Volume.get_config()
+
+    task_config['user_id'] = current_user.id
+
+    return jsonify(task_config)
 
 
 @task_bp.route('/cancel_active_task/<task_id>')

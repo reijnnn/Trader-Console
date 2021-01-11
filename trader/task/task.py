@@ -1,17 +1,27 @@
+from flask import flash
 from ..extensions import logger, db
 from ..telegram_bot.notifications_service import add_notification
 from ..utils.helper import wrap_code, escape_text
-from ..trader_bot.strategies import Strategies, CheckFunctions
+from ..trader_bot.strategies import (
+    Alert,
+    Price,
+    Volume,
+    Envelope,
+    DumpPriceHistory,
+    StrategyType,
+)
+from ..trader_bot.check_functions import CheckFunctions
 from .models import Tasks, TaskStatus
 from .tasks_service import get_task
 from json import loads, dumps
 
 
 class Task:
-    def __init__(self, cmd, chat_id, reply_to_message_id):
+    def __init__(self, cmd, chat_id, reply_to_message_id=None, from_ui=False):
 
         self.chat_id = chat_id
         self.reply_to_message_id = reply_to_message_id
+        self.from_ui = from_ui
         self.option = None
         self.strategy = None
         self.params = None
@@ -48,11 +58,11 @@ class Task:
             }
         }
 
-        self.config['strategies']['alert'] = Strategies.get_alert_config()
-        self.config['strategies']['envelope'] = Strategies.get_envelope_config()
-        self.config['strategies']['price'] = Strategies.get_price_config()
-        self.config['strategies']['volume'] = Strategies.get_volume_config()
-        self.config['strategies']['dump_price_history'] = Strategies.get_dump_price_history_config()
+        self.config['strategies'][StrategyType.ALERT] = Alert.get_config()
+        self.config['strategies'][StrategyType.ENVELOPE] = Envelope.get_config()
+        self.config['strategies'][StrategyType.PRICE] = Price.get_config()
+        self.config['strategies'][StrategyType.VOLUME] = Volume.get_config()
+        self.config['strategies'][StrategyType.DUMP_PRICE_HISTORY] = DumpPriceHistory.get_config()
 
         self.parse_command(cmd)
 
@@ -352,4 +362,7 @@ class Task:
         return True
 
     def add_task_notification(self, text, task_id=''):
-        add_notification(text=text, chat_id=self.chat_id, task_id=task_id, reply_to_message_id=self.reply_to_message_id)
+        if self.from_ui:
+            flash(text, 'info')
+        else:
+            add_notification(text=text, chat_id=self.chat_id, task_id=task_id, reply_to_message_id=self.reply_to_message_id)

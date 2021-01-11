@@ -6,6 +6,7 @@ from ..telegram_bot.notifications_service import add_notification
 from .forms import LoginForm, CreateUserForm, EditUserForm, ResetPasswordForm
 from .models import Users, UserStatus
 from .decorators import *
+from .users_service import get_user_by_id, check_user_permission
 from sqlalchemy import or_
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
@@ -75,7 +76,7 @@ def create_user():
 @login_required
 @is_admin
 def edit_user(user_id):
-    user = db.session.query(Users).filter_by(id=user_id).first()
+    user = get_user_by_id(user_id)
 
     if not user:
         flash("User not found", 'info')
@@ -85,7 +86,7 @@ def edit_user(user_id):
         flash("You can't change the system user", 'info')
         return redirect(url_for('user.users_list'))
 
-    if not current_user.is_super_admin and user.id != current_user.id and user.owner_id != current_user.id:
+    if not check_user_permission(user):
         flash("You don't have permission to edit this user", 'info')
         return redirect(url_for('user.users_list'))
 
@@ -151,7 +152,7 @@ def users_list(page):
 @login_required
 @is_admin
 def delete_user(user_id):
-    user = db.session.query(Users).filter_by(id=user_id).first()
+    user = get_user_by_id(user_id)
 
     if not user:
         flash("User not found", 'info')
@@ -161,7 +162,7 @@ def delete_user(user_id):
         flash("You can't change the system user", 'info')
         return redirect(url_for('user.users_list'))
 
-    if not current_user.is_super_admin and user.id != current_user.id and user.owner_id != current_user.id:
+    if not check_user_permission(user):
         flash("You don't have permission to edit this user", 'info')
         return redirect(url_for('user.users_list'))
 
@@ -181,7 +182,7 @@ def send_message():
     user_id = request.form.get('user_id')
     message_text = request.form.get('message_text')
 
-    user = db.session.query(Users).filter_by(id=user_id).first()
+    user = get_user_by_id(user_id)
 
     if not message_text.strip():
         flash("Enter a message", 'info')
@@ -195,7 +196,7 @@ def send_message():
         flash("User doesn't have telegram_id", 'info')
         return redirect(url_for('user.users_list'))
 
-    if not current_user.is_super_admin and user.id != current_user.id and user.owner_id != current_user.id:
+    if not check_user_permission(user):
         flash("You don't have permission to send message this user", 'info')
         return redirect(url_for('user.users_list'))
 
@@ -211,7 +212,7 @@ def send_message():
 @login_required
 @is_admin
 def reset_password_user(user_id):
-    user = db.session.query(Users).filter_by(id=user_id).first()
+    user = get_user_by_id(user_id)
 
     if not user:
         flash("User not found", 'info')
@@ -221,7 +222,7 @@ def reset_password_user(user_id):
         flash("You can't change the system user", 'info')
         return redirect(url_for('user.users_list'))
 
-    if not current_user.is_super_admin and user.id != current_user.id and user.owner_id != current_user.id:
+    if not check_user_permission(user):
         flash("You don't have permission to edit this user", 'info')
         return redirect(url_for('user.users_list'))
 
@@ -250,7 +251,7 @@ def reset_password_user(user_id):
 
 @user_bp.route('/change_password_user/<user_id>/<reset_code>', methods=['GET', 'POST'])
 def change_password_user(user_id, reset_code):
-    user = db.session.query(Users).filter_by(id=user_id).first()
+    user = get_user_by_id(user_id)
 
     if not user:
         flash("User not found", 'info')
