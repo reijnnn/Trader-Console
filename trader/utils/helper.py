@@ -11,6 +11,10 @@ def wrap_code(msg):
     return '<code>{}</code>'.format(msg)
 
 
+def unwrap_code(msg):
+    return msg.replace('<code>', '').replace('</code>', '')
+
+
 def time_now():
     return datetime.now().replace(microsecond=0)
 

@@ -1,7 +1,7 @@
 from flask import flash
 from ..extensions import logger, db
 from ..telegram_bot.notifications_service import add_notification
-from ..utils.helper import wrap_code, escape_text
+from ..utils.helper import wrap_code, unwrap_code, escape_text
 from ..trader_bot.strategies import (
     Alert,
     Price,
@@ -363,6 +363,6 @@ class Task:
 
     def add_task_notification(self, text, task_id=''):
         if self.from_ui:
-            flash(text, 'info')
+            flash(unwrap_code(text), 'info')
         else:
             add_notification(text=text, chat_id=self.chat_id, task_id=task_id, reply_to_message_id=self.reply_to_message_id)

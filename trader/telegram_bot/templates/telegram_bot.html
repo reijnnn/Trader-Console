@@ -60,7 +60,7 @@
                         <td>{{ notification['notif_id'] }}</td>
                         <td>{{ notification['notif_status'] }}</td>
                         <td>{{ notification['notif_date'] }}</td>
-                        <td>{{ notification['notif_text'] }}</td>
+                        <td>{{ notification['notif_text'] | striptags }}</td>
                         <td>{{ notification['chat_id'] }}</td>
                         <td>{{ notification['task_id'] }}</td>
                      </tr>
