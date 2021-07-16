@@ -12,9 +12,9 @@
       </div>
       <div class="logs-navigation">
          <ul class="nav nav-tabs">
-            <li {% if logs_type == 'debug' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='debug') }}">Debug</a></li>
-            <li {% if logs_type == 'info'  %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='info') }}">Info</a></li>
-            <li {% if logs_type == 'error' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', type='error') }}">Error</a></li>
+            <li {% if log_level == 'debug' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', level='debug') }}">Debug</a></li>
+            <li {% if log_level == 'info'  %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', level='info') }}">Info</a></li>
+            <li {% if log_level == 'error' %} class="active" {% endif %}><a href="{{ url_for('frontend.logs', level='error') }}">Error</a></li>
          </ul>
       </div>
       <div class="panel-body">

@@ -1,4 +1,4 @@
-from flask import render_template, request, Blueprint, current_app
+from flask import render_template, request, Blueprint, current_app, flash
 from flask_login import login_required
 from flask_wtf.csrf import CSRFError
 from ..user.decorators import *
@@ -16,7 +16,8 @@ def index():
 
 
 @frontend_bp.app_errorhandler(404)
-def page_not_found(e):
+def handle_not_found(e):
+    flash(str(e), 'warning')
     return redirect(url_for('frontend.index'))
 
 
@@ -25,65 +26,48 @@ def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400
 
 
-@frontend_bp.route('/logs/', defaults={'type': 'info', 'page': 1})
-@frontend_bp.route('/logs/<type>', defaults={'page': 1})
-@frontend_bp.route('/logs/<type>/<int:page>')
+@frontend_bp.route('/logs/', defaults={'level': 'info', 'page': 1})
+@frontend_bp.route('/logs/<level>', defaults={'page': 1})
+@frontend_bp.route('/logs/<level>/<int:page>')
 @login_required
 @is_super_admin
-def logs(type, page):
+def logs(level, page):
     search = request.args.get('search')
-    cnt_rows = 0
-    logs_type = type.lower()
+    log_level = level.lower()
 
-    if logs_type == 'debug':
+    if log_level == 'debug':
         log_file_path = current_app.config['APP_LOG_DEBUG_FILE']
-    elif logs_type == 'error':
+    elif log_level == 'error':
         log_file_path = current_app.config['APP_LOG_ERROR_FILE']
     else:
         log_file_path = current_app.config['APP_LOG_INFO_FILE']
-        logs_type = 'info'
+        log_level = 'info'
 
+    cnt_rows = 0
     if path.exists(log_file_path):
         with open(log_file_path, "r") as f:
-            while True:
-                line = f.readline()
-                if not line:
-                    break
+            for line in f:
+                if not search or search and search.lower() in line.lower():
+                    cnt_rows += 1
 
-                if search:
-                    if line.lower().find(search.lower()) != -1:
-                        cnt_rows = cnt_rows + 1
-                else:
-                    cnt_rows = cnt_rows + 1
+    logs_result = deque(maxlen=current_app.config['PAGINATION_PAGE_SIZE'])
 
-    logs = deque()
     num_row = 0
     if cnt_rows > 0 and path.exists(log_file_path):
         with open(log_file_path, "r") as f:
-            while True:
-                line = f.readline()
-                if not line:
-                    break
-
-                if search:
-                    if line.lower().find(search.lower()) != -1:
-                        logs.append(line)
-                        num_row = num_row + 1
-                else:
-                    logs.append(line)
-                    num_row = num_row + 1
-
-                if len(logs) > current_app.config['PAGINATION_PAGE_SIZE']:
-                    logs.popleft()
+            for line in f:
+                if not search or search and search.lower() in line.lower():
+                    logs_result.append(line)
+                    num_row += 1
 
                 if cnt_rows - num_row <= (page - 1) * current_app.config['PAGINATION_PAGE_SIZE']:
                     break
 
-    logs.reverse()
+    logs_result.reverse()
 
     pagination = Pagination(page=page,
                             per_page=current_app.config['PAGINATION_PAGE_SIZE'],
                             total_count=cnt_rows,
                             filter_text=search)
 
-    return render_template('logs.html', logs=logs, pagination=pagination, logs_type=logs_type)
+    return render_template('logs.html', logs=logs_result, pagination=pagination, log_level=log_level)

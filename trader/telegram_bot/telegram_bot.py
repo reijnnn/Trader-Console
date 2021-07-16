@@ -14,6 +14,7 @@ class TelegramBot(threading.Thread):
         super(TelegramBot, self).__init__()
         self.offset = 0
         self.is_active = False
+        self.app = None
 
         if app is not None:
             self.init_app(app)

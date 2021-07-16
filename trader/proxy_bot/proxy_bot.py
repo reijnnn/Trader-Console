@@ -14,6 +14,7 @@ class ProxyBot(threading.Thread):
         super(ProxyBot, self).__init__()
         self.is_active = False
         self.active_proxy_id = None
+        self.app = None
 
         if app is not None:
             self.init_app(app)
@@ -56,7 +57,8 @@ class ProxyBot(threading.Thread):
             db.session.commit()
             return False
 
-    def get_random_proxy(self):
+    @staticmethod
+    def get_random_proxy():
         query = db.session.query(Proxies)
 
         total_count = query.count()

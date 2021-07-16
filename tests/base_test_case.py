@@ -9,19 +9,24 @@ from random import choice
 
 
 class BaseTestCase(unittest.TestCase):
+    @classmethod
+    def _init_app(cls):
+        cls.COMMON_PASSWORD = '123456'
+        cls.COMMON_TELEGRAM_ID = -123454321
 
-    def _init_app(self):
-        self.COMMON_PASSWORD = '123456'
-        self.COMMON_TELEGRAM_ID = -123454321
+        cls.app = current_app
+        cls.client = cls.app.test_client()
 
-        self.app = current_app
-        self.client = self.app.test_client()
+    @classmethod
+    def _print_test_desc(cls, test_name):
+        print("\n\n"
+              "===============================\n"
+              f"Start {test_name}\n"
+              "===============================\n")
 
-    def _print_test_desc(self, test_name):
-        self.app.logger.info("\n\n\nStart " + test_name + "\n")
-
-    def _init_db(self):
-        self.db = db
+    @classmethod
+    def _init_db(cls):
+        cls.db = db
 
         db.drop_all()
         db.create_all()
@@ -136,7 +141,8 @@ class BaseTestCase(unittest.TestCase):
     def _get_user_by_login(self, login):
         return self.db.session.query(Users).filter_by(login=login).first()
 
-    def _generate_login(self):
+    @staticmethod
+    def _generate_login():
         return ''.join([choice(ascii_letters) for _ in range(10)]).lower()
 
     def _login(self, login, password):

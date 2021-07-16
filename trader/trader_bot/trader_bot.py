@@ -28,6 +28,7 @@ class TraderBot(threading.Thread):
     def __init__(self, app=None):
         super(TraderBot, self).__init__()
         self.is_active = False
+        self.app = None
 
         if app is not None:
             self.init_app(app)

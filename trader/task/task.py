@@ -216,7 +216,8 @@ class Task:
 
         self.add_task_notification(text=wrap_code('/task ' + ' '.join(make_list)))
 
-    def json_formatter(self, params):
+    @staticmethod
+    def json_formatter(params):
         res = "{ " + "\n"
         for k, v in params.items():
             res += '"{}": {}\n'.format(k, v)
@@ -242,7 +243,8 @@ class Task:
                     error_stack.append('Incorrect value={} for param "{}"'.format(param_val, param_key))
         return error_stack
 
-    def convert_params(self, params):
+    @staticmethod
+    def convert_params(params):
         o_params = {}
         for param in params:
             pair = param.split('=')
@@ -252,7 +254,8 @@ class Task:
                 o_params[pair[0]] = pair[1]
         return o_params
 
-    def trim_cmd(self, cmd):
+    @staticmethod
+    def trim_cmd(cmd):
 
         cmd_length = len(cmd)
         while True:
@@ -365,4 +368,7 @@ class Task:
         if self.from_ui:
             flash(unwrap_code(text), 'info')
         else:
-            add_notification(text=text, chat_id=self.chat_id, task_id=task_id, reply_to_message_id=self.reply_to_message_id)
+            add_notification(text=text,
+                             chat_id=self.chat_id,
+                             task_id=task_id,
+                             reply_to_message_id=self.reply_to_message_id)

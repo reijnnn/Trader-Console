@@ -11,6 +11,9 @@
          Home
       </div>
       <div class="panel-body">
+
+         {% include 'flashes.html' %}
+
          <code>{{ get_app_name()|upper }}</code>
          <hr>
             <a href="tg://resolve?domain={{ get_telegram_admin_username() }}">Send message to administrator</a>

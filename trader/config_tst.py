@@ -1,10 +1,9 @@
 from os import path
-from string import ascii_letters, digits
-from random import choice
+# from string import ascii_letters, digits
+# from random import choice
 
 APP_NAME = 'Trader Console TST'
 ENV = 'TST'
-DEBUG = True
 HOST = '127.0.0.1'
 PORT = 8086
 DOMAIN_NAME = 'DOMAIN_NAME'

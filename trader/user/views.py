@@ -138,14 +138,14 @@ def users_list(page):
     query = query.order_by(Users.id).offset((page - 1) * current_app.config['PAGINATION_PAGE_SIZE']). \
         limit(current_app.config['PAGINATION_PAGE_SIZE'])
 
-    users_list = query.all()
+    users_list_result = query.all()
 
     pagination = Pagination(page=page,
                             per_page=current_app.config['PAGINATION_PAGE_SIZE'],
                             total_count=total_count,
                             filter_text=search)
 
-    return render_template('users_list.html', users_list=users_list, roles=UserRole, pagination=pagination)
+    return render_template('users_list.html', users_list=users_list_result, roles=UserRole, pagination=pagination)
 
 
 @user_bp.route('/delete_user/<user_id>')

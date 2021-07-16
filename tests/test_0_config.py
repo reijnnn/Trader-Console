@@ -4,8 +4,8 @@ from tests.base_test_case import BaseTestCase
 class TestConfig(BaseTestCase):
     @classmethod
     def setUpClass(cls):
-        cls._init_app(cls)
-        cls._print_test_desc(cls, __name__)
+        cls._init_app()
+        cls._print_test_desc(__name__)
 
     def setUp(self):
         pass

@@ -56,7 +56,8 @@ class BinanceApi:
     def ping(self):
         return self.public_request('GET', 'ping')
 
-    def current_time(self):
+    @staticmethod
+    def current_time():
         return int(time.time() - 1) * 1000
 
     def time(self):

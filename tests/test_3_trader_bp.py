@@ -6,9 +6,9 @@ from trader.extensions import trader_bot
 class TestTraderBP(BaseTestCase):
     @classmethod
     def setUpClass(cls):
-        cls._init_app(cls)
-        cls._init_db(cls)
-        cls._print_test_desc(cls, __name__)
+        cls._init_app()
+        cls._init_db()
+        cls._print_test_desc(__name__)
 
     def setUp(self):
         self._logout()
