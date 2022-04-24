@@ -1,12 +1,13 @@
-from ..extensions import logger, proxy_bot
-from ..task.task import Task
-from ..user.users_service import is_authorized_telegram_id
-from ..proxy_bot.proxies_service import get_proxy
-from .notifications_service import get_queue_notifications, update_notification_status
 import requests
-from requests.exceptions import Timeout, ProxyError, SSLError
 import threading
 import time
+from requests.exceptions import Timeout, ProxyError, SSLError
+
+from ..extensions import logger, proxy_bot
+from ..proxy_bot.proxies_service import get_proxy
+from ..task.task import Task
+from ..user.users_service import is_authorized_telegram_id
+from .notifications_service import get_queue_notifications, update_notification_status
 
 
 class TelegramBot(threading.Thread):

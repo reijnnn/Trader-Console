@@ -1,10 +1,12 @@
+from collections import deque
+from os import path
+
 from flask import render_template, request, Blueprint, current_app, flash
 from flask_login import login_required
 from flask_wtf.csrf import CSRFError
+
 from ..user.decorators import *
 from ..utils.pagination import Pagination
-from collections import deque
-from os import path
 
 frontend_bp = Blueprint('frontend', __name__, template_folder='templates')
 

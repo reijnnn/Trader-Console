@@ -1,8 +1,11 @@
-from flask_login import UserMixin
-from string import ascii_letters, digits
-from random import choice
 import uuid
+from random import choice
+from string import ascii_letters, digits
+
+from flask_login import UserMixin
+# noinspection PyPackageRequirements
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from ..extensions import db
 
 

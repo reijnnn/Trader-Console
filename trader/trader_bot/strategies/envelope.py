@@ -1,13 +1,16 @@
+from datetime import datetime
+from json import loads
+
+# noinspection PyPackageRequirements
+from sqlalchemy import desc
+
 from ...extensions import db
 from ...task.tasks_service import get_task, complete_task
-from ...utils.helper import wrap_code
 from ...telegram_bot.notifications_service import add_notification
-from ..models import BinanceKlines
+from ...utils.helper import wrap_code
 from ..indicators import moving_average_envelope, stochrsi
+from ..models import BinanceKlines
 from .strategy import Strategy
-from sqlalchemy import desc
-from json import loads
-from datetime import datetime
 
 
 class Envelope(Strategy):

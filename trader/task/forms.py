@@ -1,6 +1,9 @@
 from flask_wtf import FlaskForm
+# noinspection PyPackageRequirements
 from wtforms.validators import DataRequired
+# noinspection PyPackageRequirements
 from wtforms import TextAreaField, SubmitField, SelectField, StringField
+
 from ..user.users_service import get_controlled_users
 
 

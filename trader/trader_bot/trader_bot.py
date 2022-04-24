@@ -1,5 +1,6 @@
-import time
 import threading
+import time
+
 from ..extensions import logger
 from ..task.tasks_service import (
     get_active_tasks,
@@ -10,8 +11,8 @@ from ..task.tasks_service import (
     need_end_task,
     end_task,
 )
-from ..utils.helper import wrap_code, escape_text
 from ..telegram_bot.notifications_service import add_notification
+from ..utils.helper import wrap_code, escape_text
 from .binance_api import BinanceApi
 from .strategies import (
     Alert,
@@ -67,7 +68,20 @@ class TraderBot(threading.Thread):
                         if not need_execute_task(task.task_id):
                             continue
 
+                        task_name_to_strategy_mapping = {
+                            StrategyType.ALERT: Alert,
+                            StrategyType.ENVELOPE: Envelope,
+                            StrategyType.PRICE: Price,
+                            StrategyType.VOLUME: Volume,
+                            StrategyType.DUMP_PRICE_HISTORY: DumpPriceHistory,
+                        }
+
                         try:
+                            strategy_func = task_name_to_strategy_mapping[task.task_name]
+                            strategy = strategy_func(api=binance_api)
+                            strategy.execute(task.task_id)
+
+                            """
                             if task.task_name == StrategyType.ALERT:
                                 strategy = Alert(api=binance_api)
                                 strategy.execute(task.task_id)
@@ -83,7 +97,7 @@ class TraderBot(threading.Thread):
                             if task.task_name == StrategyType.DUMP_PRICE_HISTORY:
                                 strategy = DumpPriceHistory(api=binance_api)
                                 strategy.execute(task.task_id)
-
+                            """
                             update_task_exec_time(task.task_id)
                         except Exception as e:
                             logger.error('Trader bot. Error: {}'.format(e))

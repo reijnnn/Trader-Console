@@ -1,11 +1,14 @@
+import requests
 import time
 import threading
-import requests
 from random import randint
+
+# noinspection PyPackageRequirements
+from sqlalchemy import desc
+
 from ..extensions import logger, db
 from .models import Proxies
 from .proxies_service import get_proxy
-from sqlalchemy import desc
 
 
 class ProxyBot(threading.Thread):

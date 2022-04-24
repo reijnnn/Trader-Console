@@ -1,13 +1,15 @@
 from flask import render_template, flash, request, Blueprint, current_app
 from flask_login import login_user, logout_user, login_required
+# noinspection PyPackageRequirements
+from sqlalchemy import or_
+
 from ..extensions import login_manager, logger, db
-from ..utils.pagination import Pagination
 from ..telegram_bot.notifications_service import add_notification
+from ..utils.pagination import Pagination
+from .decorators import *
 from .forms import LoginForm, CreateUserForm, EditUserForm, ResetPasswordForm
 from .models import Users, UserStatus
-from .decorators import *
 from .users_service import get_user_by_id, check_user_permission
-from sqlalchemy import or_
 
 user_bp = Blueprint('user', __name__, template_folder='templates')
 

@@ -1,5 +1,6 @@
 from flask import render_template, flash, request, Blueprint, current_app
 from flask_login import login_required
+
 from ..extensions import db
 from ..user.decorators import *
 from ..utils.pagination import Pagination

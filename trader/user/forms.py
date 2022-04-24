@@ -1,6 +1,9 @@
 from flask_wtf import FlaskForm
+# noinspection PyPackageRequirements
 from wtforms.validators import DataRequired, Length, EqualTo
+# noinspection PyPackageRequirements
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+
 from ..extensions import db
 from .models import Users, UserRole, UserStatus
 

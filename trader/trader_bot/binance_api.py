@@ -1,18 +1,17 @@
-import hmac
 import hashlib
-import time
+import hmac
 import requests
+import time
 
 
 class BinanceApi:
     def __init__(self, key, secret):
-        self.public_api_url = 'https://api.binance.com/api/v1/'
-        self.private_api_url = 'https://api.binance.com/api/v3/'
+        self.api_url = 'https://api.binance.com/api/v3/'
         self.key = key
         self.secret = bytearray(secret, encoding='utf-8')
 
     def public_request(self, method, api_method, **payload):
-        url = self.public_api_url + api_method
+        url = self.api_url+ api_method
         try:
             r = requests.request(method, url, params=payload)
             r.raise_for_status()
@@ -25,7 +24,7 @@ class BinanceApi:
             return None, 'Public request exception: {}'.format(str(e))
 
     def private_request(self, method, api_method, **payload):
-        url = self.private_api_url + api_method
+        url = self.api_url + api_method
 
         payload['timestamp'] = self.current_time()
         payload['signature'] = self.signature(**payload)

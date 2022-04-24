@@ -1,6 +1,8 @@
+# noinspection PyPackageRequirements
+from sqlalchemy.sql import func
+
 from ...extensions import db
 from ..models import BinanceKlines
-from sqlalchemy.sql import func
 
 
 class Strategy:
@@ -19,8 +21,9 @@ class Strategy:
         elif start_time:
             res, err = self.binance_api.klines(symbol=symbol, interval=interval, start_time=start_time, limit=limit)
         else:
-            last_open_time = db.session.query(func.max(BinanceKlines.open_time)).filter_by(symbol=symbol,
-                                                                                           interval=interval).scalar()
+            last_open_time = db.session.query(func.max(BinanceKlines.open_time)).\
+                filter(BinanceKlines.symbol == symbol, BinanceKlines.interval == interval).scalar()
+
             res, err = self.binance_api.klines(symbol=symbol, interval=interval, start_time=last_open_time, limit=limit)
 
         if err:

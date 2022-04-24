@@ -1,6 +1,7 @@
+from math import ceil
+
 from ..extensions import db
 from ..utils.helper import time_now
-from math import ceil
 
 INIT_PROXY_WEIGHT = 100
 INCREMENT_VALUE = 1

@@ -1,9 +1,11 @@
-from tests.base_test_case import BaseTestCase
+from json import loads
+
 from flask import url_for
+
+from tests.base_test_case import BaseTestCase
 from trader.task.models import Tasks, TaskStatus
 from trader.task.task import Task
 from trader.telegram_bot.models import Notifications
-from json import loads
 
 
 class TestTaskBP(BaseTestCase):

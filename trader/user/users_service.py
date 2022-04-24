@@ -1,7 +1,9 @@
 from flask_login import current_user
+# noinspection PyPackageRequirements
+from sqlalchemy import or_
+
 from ..extensions import db
 from .models import Users, UserStatus
-from sqlalchemy import or_
 
 
 def is_authorized_telegram_id(telegram_id):

@@ -1,8 +1,9 @@
 import logging
+from logging.handlers import RotatingFileHandler
 from os import path, makedirs
 
-from logging.handlers import RotatingFileHandler
 from flask import Flask
+
 from .extensions import (
     login_manager,
     csrf,

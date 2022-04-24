@@ -1,6 +1,8 @@
 from functools import wraps
+
 from flask_login import current_user
 from flask import redirect, url_for
+
 from .models import UserRole
 
 

@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta
+from json import loads
+
 from ..extensions import db
 from .models import Tasks, TaskStatus
-from json import loads
-from datetime import datetime, timedelta
 
 
 def get_active_tasks():

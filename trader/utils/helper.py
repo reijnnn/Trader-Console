@@ -1,6 +1,7 @@
-from html import escape
-from flask import current_app
 from datetime import datetime
+from html import escape
+
+from flask import current_app
 
 
 def escape_text(msg):

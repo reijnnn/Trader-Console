@@ -1,5 +1,6 @@
-from flask import request, url_for
 from math import ceil
+
+from flask import request, url_for
 
 
 def url_for_other_page(page):

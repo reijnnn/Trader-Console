@@ -1,8 +1,9 @@
-from ...task.tasks_service import get_task, complete_task
-from ...utils.helper import wrap_code
-from ...telegram_bot.notifications_service import add_notification
-from .strategy import Strategy
 from json import loads
+
+from ...task.tasks_service import get_task, complete_task
+from ...telegram_bot.notifications_service import add_notification
+from ...utils.helper import wrap_code
+from .strategy import Strategy
 
 
 class Price(Strategy):

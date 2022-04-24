@@ -1,9 +1,10 @@
+from datetime import datetime, timedelta
+from json import loads
+
 from ...extensions import db
 from ...task.tasks_service import get_task
 from ..models import BinanceKlines
 from .strategy import Strategy
-from json import loads
-from datetime import datetime, timedelta
 
 
 class DumpPriceHistory(Strategy):

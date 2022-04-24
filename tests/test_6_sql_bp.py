@@ -1,5 +1,6 @@
-from tests.base_test_case import BaseTestCase
 from flask import url_for
+
+from tests.base_test_case import BaseTestCase
 
 
 class TestSQLBP(BaseTestCase):

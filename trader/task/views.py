@@ -1,11 +1,12 @@
+from json import loads
+
 from flask import render_template, flash, request, Blueprint, current_app, jsonify
 from flask_login import login_required
+# noinspection PyPackageRequirements
 from sqlalchemy import desc, or_
+
 from ..extensions import db, logger
-from ..user.decorators import *
-from ..user.users_service import get_user_by_id, get_user_by_telegram_id, check_user_permission
 from ..telegram_bot.notifications_service import add_notification
-from ..utils.pagination import Pagination
 from ..trader_bot.strategies import (
     Alert,
     Price,
@@ -14,11 +15,14 @@ from ..trader_bot.strategies import (
     DumpPriceHistory,
     StrategyType,
 )
-from .models import Tasks, TaskStatus
-from .tasks_service import get_task, cancel_task
-from .task import Task
+from ..user.decorators import *
+from ..user.users_service import get_user_by_id, get_user_by_telegram_id, check_user_permission
+from ..utils.pagination import Pagination
 from .forms import ModifyTaskForm
-from json import loads
+from .models import Tasks, TaskStatus
+from .task import Task
+from .tasks_service import get_task, cancel_task
+
 
 task_bp = Blueprint('task', __name__, template_folder='templates')
 

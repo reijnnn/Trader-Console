@@ -1,7 +1,10 @@
+from json import loads, dumps
+
 from flask import flash
+
 from ..extensions import logger, db
 from ..telegram_bot.notifications_service import add_notification
-from ..utils.helper import wrap_code, unwrap_code, escape_text
+from ..trader_bot.check_functions import CheckFunctions
 from ..trader_bot.strategies import (
     Alert,
     Price,
@@ -10,10 +13,9 @@ from ..trader_bot.strategies import (
     DumpPriceHistory,
     StrategyType,
 )
-from ..trader_bot.check_functions import CheckFunctions
+from ..utils.helper import wrap_code, unwrap_code, escape_text
 from .models import Tasks, TaskStatus
 from .tasks_service import get_task
-from json import loads, dumps
 
 
 class Task:
