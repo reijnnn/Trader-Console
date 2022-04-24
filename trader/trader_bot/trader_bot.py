@@ -81,23 +81,6 @@ class TraderBot(threading.Thread):
                             strategy = strategy_func(api=binance_api)
                             strategy.execute(task.task_id)
 
-                            """
-                            if task.task_name == StrategyType.ALERT:
-                                strategy = Alert(api=binance_api)
-                                strategy.execute(task.task_id)
-                            if task.task_name == StrategyType.ENVELOPE:
-                                strategy = Envelope(api=binance_api)
-                                strategy.execute(task.task_id)
-                            if task.task_name == StrategyType.PRICE:
-                                strategy = Price(api=binance_api)
-                                strategy.execute(task.task_id)
-                            if task.task_name == StrategyType.VOLUME:
-                                strategy = Volume(api=binance_api)
-                                strategy.execute(task.task_id)
-                            if task.task_name == StrategyType.DUMP_PRICE_HISTORY:
-                                strategy = DumpPriceHistory(api=binance_api)
-                                strategy.execute(task.task_id)
-                            """
                             update_task_exec_time(task.task_id)
                         except Exception as e:
                             logger.error('Trader bot. Error: {}'.format(e))
